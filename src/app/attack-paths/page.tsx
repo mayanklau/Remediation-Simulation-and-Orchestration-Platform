@@ -40,6 +40,67 @@ export default async function AttackPathsPage() {
       </section>
 
       <section className="panel">
+        <div className="stack-head">
+          <div>
+            <h2>Attack Path Graph</h2>
+            <p>Layered graph of entry assets, reachable services, exploit preconditions, crown-jewel targets, and breaker controls.</p>
+          </div>
+          <StatusBadge value={`${analytics.summary.graphNodes} nodes`} />
+        </div>
+        <div className="attack-graph-board">
+          <div className="graph-column">
+            <span>Entry</span>
+            {analytics.graph.nodes.filter((node) => node.kind === "entry").slice(0, 5).map((node) => <GraphNode key={node.id} node={node} />)}
+          </div>
+          <div className="graph-column wide">
+            <span>Reachability and exploit edges</span>
+            {analytics.graph.edges.slice(0, 10).map((edge) => (
+              <div className={`graph-link ${edge.relation}`} key={edge.id}>
+                <strong>{labelFor(edge.from, analytics.graph.nodes)}</strong>
+                <span>{edge.label}</span>
+                <strong>{labelFor(edge.to, analytics.graph.nodes)}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="graph-column">
+            <span>Targets and breakers</span>
+            {analytics.graph.nodes.filter((node) => node.kind === "crown_jewel" || node.kind === "breaker").slice(0, 6).map((node) => <GraphNode key={node.id} node={node} />)}
+          </div>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="stack-head">
+          <div>
+            <h2>Vulnerability Chaining Graph</h2>
+            <p>Ordered exploit chain view with scanner source, technique, difficulty, residual risk, and the control that breaks the path.</p>
+          </div>
+          <StatusBadge value={`${analytics.summary.vulnerabilityChains} chains`} />
+        </div>
+        <div className="chain-grid">
+          {analytics.vulnerabilityChainGraph.map((chain) => (
+            <article className="chain-card" key={chain.pathId}>
+              <div className="chain-head">
+                <div>
+                  <strong>{chain.pathName}</strong>
+                  <span>{chain.beforeRemediationRisk}% before / {chain.afterRemediationRisk}% after</span>
+                </div>
+                <StatusBadge value={chain.difficulty} />
+              </div>
+              <div className="chain-rail">
+                {chain.nodes.map((node, index) => (
+                  <div className="chain-node-wrap" key={`${chain.pathId}-${node.id}-${index}`}>
+                    <GraphNode node={node} compact />
+                    {index < chain.nodes.length - 1 && <div className="chain-arrow">risk transfer</div>}
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
         <h2>Vulnerability Chains</h2>
         <table className="table">
           <thead>
@@ -76,3 +137,16 @@ export default async function AttackPathsPage() {
   );
 }
 
+function GraphNode({ node, compact = false }: { node: { label: string; kind: string; group: string; risk: number }; compact?: boolean }) {
+  return (
+    <div className={`graph-node ${node.kind} ${compact ? "compact" : ""}`}>
+      <small>{node.kind.replace("_", " ")}</small>
+      <strong>{node.label}</strong>
+      <span>{node.group} | {node.risk}%</span>
+    </div>
+  );
+}
+
+function labelFor(id: string, nodes: Array<{ id: string; label: string }>) {
+  return nodes.find((node) => node.id === id)?.label ?? id.replace(/^(asset|finding|breaker):/, "");
+}

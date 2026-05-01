@@ -34,7 +34,7 @@ Remediation Twin provides a full remediation operating loop:
 - Tenant-scoped APIs and persistence
 - JSON, CSV, and prototype finding ingestion
 - Asset inventory and dependency graph
-- Vulnerability chaining and attack-path analytics for scanner-normalized inputs
+- Graph-native vulnerability chaining and attack-path analytics for scanner-normalized inputs
 - Risk scoring and business-risk prioritization
 - Customer-facing before and after remediation risk scoring
 - Remediation action generation
@@ -86,6 +86,9 @@ What it does:
 - normalizes findings from vulnerability scanners, cloud posture tools, code scanners, IAM analyzers, Kubernetes controls, compliance scanners, and ticket sources into a common chain model
 - combines asset dependency edges, internet exposure, criticality, sensitivity, finding category, exploit availability, active exploitation, patch availability, and policy controls
 - constructs bounded attack paths from exposed or initial-access assets to crown-jewel and production targets
+- returns a graph contract with entry nodes, reachability edges, finding/precondition nodes, crown-jewel targets, and breaker controls
+- renders a dedicated Attack Path Graph UI that shows how exposure moves through reachable systems into business-critical targets
+- renders a separate Vulnerability Chaining Graph UI that shows each ordered exploit chain, scanner source, mapped technique, difficulty, residual risk, and path breaker
 - labels each path with difficulty: `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH`
 - calculates before-remediation path risk, after-remediation residual risk, risk delta, likelihood, and business impact
 - recommends path breakers such as WAF/API gateway virtual patches, microsegmentation, conditional IAM denies, route quarantine, and database access restriction
@@ -241,7 +244,7 @@ Live production execution remains intentionally governed and dry-run by default 
 | `/findings` | Finding backlog |
 | `/assets` | Asset inventory |
 | `/asset-graph` | Dependency, blast-radius, and risk-transfer map |
-| `/attack-paths` | Vulnerability chaining, path difficulty, and before/after remediation risk |
+| `/attack-paths` | Attack path graph, vulnerability chaining graph, path difficulty, and before/after remediation risk |
 | `/remediation` | Remediation queue |
 | `/simulations` | Simulation history |
 | `/workflows` | Approval workflow |

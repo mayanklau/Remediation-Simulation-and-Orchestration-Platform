@@ -41,7 +41,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Multi-tenant backend and tenant-scoped APIs
 - JSON and CSV finding ingestion
 - Asset inventory and asset graph
-- Vulnerability chaining and attack-path analytics
+- Graph-native vulnerability chaining and attack-path analytics
 - Deduplication and source correlation
 - Risk scoring, attack-path difficulty, before/after remediation risk, and remediation action generation
 - Simulation, planning, workflow, approvals, and evidence
@@ -142,12 +142,14 @@ The product must turn scanner noise into end-to-end vulnerability analytics:
 | Attack graph construction | Build logical attack paths from asset dependencies, exposure, exploit preconditions, identity/control relationships, high-value targets, and vulnerability metadata. |
 | Bounded path enumeration | Enumerate bounded simple paths from exposed or initial-access assets to crown-jewel, production, critical, or sensitive targets. |
 | Vulnerability chaining | Convert each path into ordered chain steps with source scanner, category, severity, exploit status, patchability, business risk, and mapped attack technique. |
+| Attack path graph UI | Render entry assets, reachability edges, exploit-precondition findings, crown-jewel targets, and breaker controls as a graph-native workbench. |
+| Vulnerability chain graph UI | Render each ordered vulnerability chain as connected graph nodes with scanner source, mapped technique, difficulty, before/after risk, and breaker outcome. |
 | Difficulty scoring | Label every path as `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH` using hop count, exposure, exploit availability, active exploitation, patchability, and control friction. |
 | Before/after risk | Show customer-facing risk before remediation, estimated residual risk after remediation, and the risk delta expected from patching, virtual patching, path breakers, and policy controls. |
 | Breaker recommendation | Recommend microsegmentation, WAF/API gateway controls, service mesh policy, conditional IAM deny, route quarantine, and database access restrictions. |
 | Evidence snapshot | Persist attack-path analytics as report snapshots and audit records for governance and executive reporting. |
 
-`GET /api/attack-paths` must return the current attack-path model. `POST /api/attack-paths` with `{ "action": "snapshot" }` must save the analytics as evidence-ready reporting data.
+`GET /api/attack-paths` must return the current attack-path model, attack graph, vulnerability chain graph, graph nodes, graph edges, difficulty scoring, before/after risk, and breaker recommendations. `POST /api/attack-paths` with `{ "action": "snapshot" }` must save the analytics as evidence-ready reporting data.
 
 ## Agentic Orchestrator Requirements
 

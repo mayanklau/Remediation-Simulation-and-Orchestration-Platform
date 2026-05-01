@@ -39,6 +39,35 @@ export type AttackPath = {
   remediationPriority: "immediate" | "high" | "scheduled" | "monitor";
 };
 
+export type AttackGraphNode = {
+  id: string;
+  label: string;
+  kind: "entry" | "asset" | "crown_jewel" | "finding" | "breaker";
+  group: string;
+  risk: number;
+  difficulty?: AttackPathDifficulty;
+};
+
+export type AttackGraphEdge = {
+  id: string;
+  from: string;
+  to: string;
+  label: string;
+  weight: number;
+  pathId: string;
+  relation: "reachability" | "exploit_precondition" | "breaker";
+};
+
+export type VulnerabilityChainGraph = {
+  pathId: string;
+  pathName: string;
+  difficulty: AttackPathDifficulty;
+  beforeRemediationRisk: number;
+  afterRemediationRisk: number;
+  nodes: AttackGraphNode[];
+  edges: AttackGraphEdge[];
+};
+
 export async function buildAttackPathAnalytics(tenantId: string) {
   const [graph, findings, simulations, policies] = await Promise.all([
     buildAssetGraph(tenantId),
@@ -105,6 +134,7 @@ export async function buildAttackPathAnalytics(tenantId: string) {
     })
     .sort((left, right) => right.beforeRemediationRisk - left.beforeRemediationRisk)
     .slice(0, 25);
+  const graphModel = buildAttackGraph(paths);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -120,8 +150,17 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       averageBeforeRisk: average(paths.map((path) => path.beforeRemediationRisk)),
       averageAfterRisk: average(paths.map((path) => path.afterRemediationRisk)),
       averageRiskReduction: average(paths.map((path) => path.riskDelta)),
-      scannerInputs: [...new Set(paths.flatMap((path) => path.scannerInputs))]
+      scannerInputs: [...new Set(paths.flatMap((path) => path.scannerInputs))],
+      graphNodes: graphModel.nodes.length,
+      graphEdges: graphModel.edges.length,
+      vulnerabilityChains: graphModel.vulnerabilityChains.length
     },
+    graph: {
+      method: "Layered logical attack graph: entry assets, reachable services, exploit preconditions, crown-jewel targets, and policy-backed breaker controls.",
+      nodes: graphModel.nodes,
+      edges: graphModel.edges
+    },
+    vulnerabilityChainGraph: graphModel.vulnerabilityChains,
     paths
   };
 }
@@ -245,6 +284,123 @@ function priority(before: number, after: number): AttackPath["remediationPriorit
   return "monitor";
 }
 
+function buildAttackGraph(paths: AttackPath[]) {
+  const nodeMap = new Map<string, AttackGraphNode>();
+  const edgeMap = new Map<string, AttackGraphEdge>();
+  const vulnerabilityChains: VulnerabilityChainGraph[] = [];
+
+  const upsertNode = (node: AttackGraphNode) => {
+    const existing = nodeMap.get(node.id);
+    nodeMap.set(node.id, existing ? { ...existing, risk: Math.max(existing.risk, node.risk), group: existing.group || node.group } : node);
+  };
+
+  for (const path of paths) {
+    const hopIds = path.hops.map((hop) => `asset:${slug(hop)}`);
+    path.hops.forEach((hop, index) => {
+      upsertNode({
+        id: hopIds[index],
+        label: hop,
+        kind: index === 0 ? "entry" : index === path.hops.length - 1 ? "crown_jewel" : "asset",
+        group: index === 0 ? "Entry" : index === path.hops.length - 1 ? "Target" : "Transit",
+        risk: index === path.hops.length - 1 ? path.beforeRemediationRisk : Math.max(20, path.beforeRemediationRisk - index * 8),
+        difficulty: path.difficulty
+      });
+      if (index > 0) {
+        const edgeId = `reach:${path.id}:${index}`;
+        edgeMap.set(edgeId, {
+          id: edgeId,
+          from: hopIds[index - 1],
+          to: hopIds[index],
+          label: `${path.difficulty} / ${path.beforeRemediationRisk}%`,
+          weight: path.beforeRemediationRisk,
+          pathId: path.id,
+          relation: "reachability"
+        });
+      }
+    });
+
+    const chainNodes: AttackGraphNode[] = path.chain.map((step, index) => ({
+      id: `finding:${path.id}:${index}:${slug(step.findingId)}`,
+      label: step.title,
+      kind: "finding",
+      group: step.source,
+      risk: step.businessRisk,
+      difficulty: path.difficulty
+    }));
+    const breakerNode: AttackGraphNode = {
+      id: `breaker:${path.id}`,
+      label: path.recommendedBreakers[0] ?? "Simulation-backed path breaker",
+      kind: "breaker",
+      group: path.remediationPriority,
+      risk: path.riskDelta,
+      difficulty: path.difficulty
+    };
+
+    chainNodes.forEach(upsertNode);
+    upsertNode(breakerNode);
+
+    const chainEdges: AttackGraphEdge[] = [];
+    chainNodes.forEach((node, index) => {
+      const source = index === 0 ? hopIds[0] : chainNodes[index - 1].id;
+      const edge: AttackGraphEdge = {
+        id: `chain:${path.id}:${index}`,
+        from: source,
+        to: node.id,
+        label: path.chain[index].technique,
+        weight: path.chain[index].businessRisk,
+        pathId: path.id,
+        relation: "exploit_precondition"
+      };
+      edgeMap.set(edge.id, edge);
+      chainEdges.push(edge);
+    });
+    if (chainNodes.length > 0) {
+      const targetEdge: AttackGraphEdge = {
+        id: `chain:${path.id}:target`,
+        from: chainNodes[chainNodes.length - 1].id,
+        to: hopIds[hopIds.length - 1],
+        label: `${path.targetAsset} compromise`,
+        weight: path.beforeRemediationRisk,
+        pathId: path.id,
+        relation: "exploit_precondition"
+      };
+      const breakerEdge: AttackGraphEdge = {
+        id: `breaker:${path.id}:risk-drop`,
+        from: breakerNode.id,
+        to: hopIds[hopIds.length - 1],
+        label: `${path.riskDelta}% risk reduction`,
+        weight: path.riskDelta,
+        pathId: path.id,
+        relation: "breaker"
+      };
+      edgeMap.set(targetEdge.id, targetEdge);
+      edgeMap.set(breakerEdge.id, breakerEdge);
+      chainEdges.push(targetEdge, breakerEdge);
+    }
+
+    vulnerabilityChains.push({
+      pathId: path.id,
+      pathName: path.name,
+      difficulty: path.difficulty,
+      beforeRemediationRisk: path.beforeRemediationRisk,
+      afterRemediationRisk: path.afterRemediationRisk,
+      nodes: [
+        { id: hopIds[0], label: path.entryAsset, kind: "entry", group: "Entry", risk: path.beforeRemediationRisk, difficulty: path.difficulty },
+        ...chainNodes,
+        { id: hopIds[hopIds.length - 1], label: path.targetAsset, kind: "crown_jewel", group: "Target", risk: path.beforeRemediationRisk, difficulty: path.difficulty },
+        breakerNode
+      ],
+      edges: chainEdges
+    });
+  }
+
+  return {
+    nodes: [...nodeMap.values()].sort((left, right) => right.risk - left.risk).slice(0, 80),
+    edges: [...edgeMap.values()].sort((left, right) => right.weight - left.weight).slice(0, 120),
+    vulnerabilityChains: vulnerabilityChains.slice(0, 8)
+  };
+}
+
 function average(values: number[]) {
   return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : 0;
 }
@@ -253,3 +409,6 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.round(value)));
 }
 
+function slug(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "node";
+}
