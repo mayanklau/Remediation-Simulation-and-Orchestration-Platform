@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { buildAttackPathAnalytics } from "@/domain/attack-path-analytics";
 import { getOrCreateDefaultTenant } from "@/lib/tenant";
+import { AttackPathGraphViews } from "./GraphViews";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,8 @@ export default async function AttackPathsPage() {
           ))}
         </div>
       </section>
+
+      <AttackPathGraphViews paths={analytics.paths} />
 
       <section className="panel">
         <h2>Vulnerability Chains</h2>
