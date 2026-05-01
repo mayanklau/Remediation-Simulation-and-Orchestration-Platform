@@ -54,6 +54,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Closed-loop operating-system view
 - Enterprise maturity command center
 - Pilot control plane for production-pilot activation
+- Final production completion center
 
 ## Enterprise Maturity Requirements
 
@@ -93,6 +94,25 @@ The product must also support the next ten pilot-grade operating capabilities:
 
 `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` must activate these capabilities from existing tenant data, avoid raw secret storage, and keep all execution in dry-run mode until live credentials and policy approvals are configured.
 
+## Final Production Requirements
+
+The final completion layer must close the last production readiness controls:
+
+| Control | Requirement |
+| --- | --- |
+| Database and migrations | Support production database deployment, migration deploy, backup posture, and environment separation. |
+| Auth, SSO, and RBAC | Prepare SSO/OIDC, session hardening, RBAC bindings, and access auditability. |
+| Connector secret references | Require external secret references and prohibit raw secret storage. |
+| Background workers | Represent ingestion, simulation, evidence, connector sync, and rollback worker lanes. |
+| Live integration runway | Validate live Jira, GitHub, ServiceNow, scanner, Kubernetes, cloud, and IAM readiness through dry-run records. |
+| Executable policy runtime | Enforce execution attestation, evidence retention, tenant boundary, and observability policies. |
+| Evidence vault and retention | Track immutable evidence retention controls and evidence storage readiness. |
+| Observability and operations | Expose health checks, run records, audit records, metrics readiness, and alert integration posture. |
+| Enterprise deployment | Provide production Docker compose, environment contract, and deployment guide. |
+| Security hardening | Apply security headers, tenant isolation posture, RBAC catalog, audit history, and dry-run defaults. |
+
+`POST /api/final-production` with `{ "action": "finalize" }` must create the final policies, worker hooks, rollback coordinator, production report, readiness campaign, SSO/RBAC records, connector readiness checks, and audit event.
+
 ## Primary Routes
 
 - `/`
@@ -108,6 +128,7 @@ The product must also support the next ten pilot-grade operating capabilities:
 - `/campaign-board`
 - `/operating-system`
 - `/pilot-control-plane`
+- `/final-production`
 - `/enterprise-maturity`
 - `/governance`
 - `/enterprise`
@@ -126,6 +147,7 @@ The product must also support the next ten pilot-grade operating capabilities:
 - Auto-approval eligibility
 - Enterprise maturity score
 - Pilot readiness score
+- Final production completion score
 
 ## Non-Goals
 

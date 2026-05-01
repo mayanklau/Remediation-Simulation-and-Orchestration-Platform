@@ -8,6 +8,7 @@ Remediation Twin is a full-stack Next.js application with Prisma persistence and
 - `src/domain`: business logic for ingestion, risk scoring, simulation, planning, workflows, and evidence.
 - `src/lib`: persistence, tenant resolution, JSON helpers, API wrappers, and audit helpers.
 - `prisma/schema.prisma`: production data model.
+- `middleware.ts`: baseline security headers for application and API routes.
 
 ## Core Flow
 
@@ -21,15 +22,16 @@ Remediation Twin is a full-stack Next.js application with Prisma persistence and
 8. Workflow items track execution and approvals.
 9. Evidence artifacts preserve audit history.
 
-## Production Hardening Still Expected
+## Production Envelope
 
-The app is built with production boundaries, but a real deployment should add:
+The final production layer now includes:
 
-- Enterprise SSO with SAML or OIDC.
-- External secrets manager.
-- PostgreSQL instead of local SQLite.
-- Object storage for large evidence artifacts.
-- Queue-backed workers for long simulations.
-- Vendor-specific connectors.
-- Immutable audit log storage.
-- Full LLM integration behind the deterministic copilot contract.
+- `/final-production` readiness center.
+- `GET /api/final-production` and `POST /api/final-production`.
+- Production policies for execution attestation, evidence retention, tenant boundaries, and observability.
+- Worker hooks for ingestion, simulation, evidence, connector sync, and rollback coordination.
+- Production Docker compose with Postgres.
+- Security headers through middleware.
+- Deployment and security documentation.
+
+External setup is still required for live credentials, real identity provider metadata, object storage, and telemetry endpoints. Until those are configured, execution remains dry-run by design.

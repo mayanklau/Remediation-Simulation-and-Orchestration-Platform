@@ -53,6 +53,8 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `POST /api/pilot-readiness`
 - `GET /api/pilot-control-plane`
 - `POST /api/pilot-control-plane`
+- `GET /api/final-production`
+- `POST /api/final-production`
 
 `POST /api/pilot-readiness` supports:
 
@@ -86,6 +88,32 @@ Connector operations create durable run records for Jira, GitHub, ServiceNow, Te
 ```
 
 It configures scanner connector profiles, performs dry-run connector operations, writes policy-as-code rules, creates execution hooks, runs simulations and plan generation for open remediation actions, routes approvals, attaches evidence artifacts, generates evidence packs, starts dry-run automation records, refreshes reports and campaigns, prepares SSO/RBAC readiness, and writes an audit entry.
+
+## Final Production
+
+- `GET /api/final-production`
+- `POST /api/final-production`
+
+`GET /api/final-production` returns final deployability scoring for:
+
+- Database and migrations
+- Auth, SSO, and RBAC
+- Connector secret references
+- Background workers
+- Live integration runway
+- Executable policy runtime
+- Evidence vault and retention
+- Observability and operations
+- Enterprise deployment
+- Security hardening
+
+`POST /api/final-production` accepts:
+
+```json
+{ "action": "finalize" }
+```
+
+It creates production guardrail policies, worker execution lanes, rollback coordination, connector readiness checks, continuous simulation, production report, readiness campaign, SSO/RBAC readiness records, and a final audit event.
 
 ## Enterprise Maturity
 
