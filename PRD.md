@@ -39,6 +39,11 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 ## Implemented Scope
 
 - Multi-tenant backend and tenant-scoped APIs
+- SSO/OIDC readiness, signed sessions, tenant isolation checks, and RBAC enforcement helper contracts
+- Service/repository/DTO structure for route logic, shared validation, and contract-driven APIs
+- Queue-worker contracts for ingestion, simulation, connector sync, evidence generation, and report snapshots
+- Environment separation and strict runtime configuration validation for local, dev, staging, and production
+- CI/CD quality gates covering typecheck, tests, build, migration validation, dependency audit, and container-scan readiness
 - JSON and CSV finding ingestion
 - Asset inventory and asset graph
 - Graph-native vulnerability chaining and attack-path analytics
@@ -78,6 +83,19 @@ The product must operationalize ten advanced maturity tracks:
 | Production hardening | Expose retry telemetry, run records, audit logs, deployment posture, and operational guardrails. |
 
 `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` must create the baseline operating layer for all ten tracks while keeping execution in dry-run mode.
+
+## Advanced Vulnerability Analytics Requirements
+
+| Capability | Requirement |
+| --- | --- |
+| Graph algorithms | Identify shortest exploitable path, k-hop blast radius, centrality-style concentration, choke points, and crown-jewel exposure. |
+| Domain chaining | Apply network, IAM, cloud, Kubernetes, application, CI/CD, secrets, and data-store chaining rules. |
+| Exploit preconditions | Model required privilege, network access, user interaction, token scope, lateral movement, and control friction. |
+| Difficulty explainability | Explain why a path is low, medium, high, or very high difficulty and list assumptions used. |
+| Control simulation | Score before/after risk for patching, WAF/API rules, IAM denies, segmentation, container rebuilds, and cloud policies. |
+| Path breaker engine | Recommend the edge or control that removes the largest amount of path risk for the least change risk. |
+| Scanner adapters | Normalize Tenable, Qualys, Wiz, Prisma Cloud, Snyk, GitHub Advanced Security, AWS Security Hub, Defender, and CrowdStrike. |
+| Executive views | Show business services at risk, weekly risk reduced, blocked remediations, and attack paths closed. |
 
 ## Production-Pilot Requirements
 

@@ -32,6 +32,10 @@ Remediation Twin provides a full remediation operating loop:
 
 - Multi-tenant Next.js and Prisma application
 - Tenant-scoped APIs and persistence
+- SSO/OIDC production contract, signed sessions, tenant-boundary checks, and RBAC permission gates for sensitive APIs
+- Service, repository, DTO, and shared validation contracts for moving route handlers away from direct persistence logic
+- Queue-worker contracts for ingestion, simulation, connector sync, evidence generation, and report snapshots
+- Runtime configuration validation for local, dev, staging, and production with strict production checks
 - JSON, CSV, and prototype finding ingestion
 - Asset inventory and dependency graph
 - Graph-native vulnerability chaining and attack-path analytics for scanner-normalized inputs
@@ -51,7 +55,7 @@ Remediation Twin provides a full remediation operating loop:
 - Worker runner for ingestion, simulation, evidence, connector sync, and automation
 - Evidence sealing with hash chaining and retention metadata
 - Observability, health checks, run records, and production telemetry
-- CI workflow, Docker Compose, production environment contract, and baseline Prisma migration
+- CI workflow, Docker Compose, production environment contract, baseline Prisma migration, dependency audit, and quality gates
 
 ## Key Modules
 
@@ -78,6 +82,16 @@ Remediation Twin provides a full remediation operating loop:
 | Production Ops | Runtime workers, SSO/session contracts, telemetry, evidence sealing, and live connector dry-runs. |
 
 ## Attack Path Analytics
+
+The attack-path module now covers deeper vulnerability analytics and remediation governance:
+
+- Shortest exploitable path and bounded k-hop blast-radius modeling.
+- Crown-jewel exposure, choke-point/path-breaker scoring, and centrality-style concentration signals.
+- Domain chaining rules for network, IAM, cloud, Kubernetes, application, CI/CD, secrets, and data-store findings.
+- Exploit precondition modeling for privilege, network access, user interaction, token scope, and lateral movement.
+- Control-specific before/after risk for patching, WAF/API controls, IAM deny, segmentation, container rebuild, and cloud policy.
+- Evidence packs covering before state, simulation result, approval, execution log, validation, and residual risk.
+- Executive views for business services at risk, risk reduced, blocked remediations, and attack paths closed.
 
 The `/attack-paths` module turns raw scanner findings into end-to-end vulnerability analytics. It is designed around established attack-graph research: logical attack graphs, topological vulnerability analysis, bounded simple-path enumeration, exploit-dependency reasoning, and Bayesian-style risk reduction after controls are applied.
 
