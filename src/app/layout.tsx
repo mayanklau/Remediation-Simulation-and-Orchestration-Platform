@@ -49,6 +49,7 @@ const nav = [
   { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
   { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
   { href: "/virtual-patching", label: "Virtual Patch", icon: ShieldCheck },
+  { href: "/agentic", label: "Agentic", icon: Bot },
   { href: "/final-production", label: "Final Prod", icon: ShieldCheck },
   { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
   { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
