@@ -17,7 +17,8 @@ import {
   ShieldAlert,
   Cable,
   ClipboardList,
-  Columns3
+  Columns3,
+  Rocket
 } from "lucide-react";
 import "./globals.css";
 
@@ -45,6 +46,7 @@ const nav = [
   { href: "/exceptions", label: "Exceptions", icon: ScrollText },
   { href: "/campaigns", label: "Campaigns", icon: Bot },
   { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
+  { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
   { href: "/governance", label: "Governance", icon: ShieldCheck },
   { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
   { href: "/audit", label: "Audit", icon: ScrollText },
