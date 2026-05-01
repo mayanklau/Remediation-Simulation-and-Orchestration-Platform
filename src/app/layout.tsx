@@ -46,6 +46,7 @@ const nav = [
   { href: "/exceptions", label: "Exceptions", icon: ScrollText },
   { href: "/campaigns", label: "Campaigns", icon: Bot },
   { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
+  { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
   { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
   { href: "/governance", label: "Governance", icon: ShieldCheck },
   { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },

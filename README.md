@@ -23,6 +23,7 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 - Continuous simulation, predictive residual risk, and policy-governed fixes
 - Self-updating remediation campaigns and campaign board
 - Enterprise maturity command center for the ten advanced capability tracks
+- Pilot control plane for the next ten production-pilot capabilities
 
 ## Main Routes
 
@@ -40,6 +41,7 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 | `/ingestion-jobs` | Durable ingestion operations |
 | `/campaign-board` | Campaign operating board |
 | `/operating-system` | Closed-loop remediation control plane |
+| `/pilot-control-plane` | Production-pilot activation for the next ten capabilities |
 | `/enterprise-maturity` | Ten-track maturity command center |
 | `/governance` | Autonomous remediation governance |
 | `/enterprise` | SSO, RBAC, and enterprise readiness |
@@ -62,6 +64,23 @@ The `/enterprise-maturity` command center operationalizes all ten advanced roadm
 
 Click **Build all 10** or call `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` to create connector profiles, connector health runs, governance guardrail policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, a maturity campaign, and an audit record from live tenant data.
 
+## Pilot Control Plane
+
+The `/pilot-control-plane` view moves the product from maturity tracking into pilot execution readiness for another ten concrete enterprise needs:
+
+1. Real scanner connectors
+2. True simulation engine
+3. Remediation playbook library
+4. Policy-as-code
+5. Approval workbench
+6. Jira, GitHub, and ServiceNow execution
+7. Evidence vault
+8. AI remediation planner
+9. Executive dashboards
+10. Production SaaS layer
+
+Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` to configure scanner connector profiles, run dry-run connector checks, create policy-as-code controls, attach simulation and plan records, route approval workflows, generate evidence artifacts, create dry-run execution records, refresh dashboards, configure SSO/RBAC readiness, and write an audit event.
+
 ## API Highlights
 
 - `GET /api/dashboard`
@@ -76,6 +95,8 @@ Click **Build all 10** or call `POST /api/enterprise-maturity` with `{ "action":
 - `POST /api/remediation-actions/:id/workflow`
 - `GET /api/pilot-readiness`
 - `POST /api/pilot-readiness`
+- `GET /api/pilot-control-plane`
+- `POST /api/pilot-control-plane`
 - `GET /api/enterprise-maturity`
 - `POST /api/enterprise-maturity`
 - `GET /api/operating-system`
@@ -113,7 +134,8 @@ DATABASE_URL="file:./dev.db" npm run build
 4. Route a workflow and attach evidence.
 5. Open `/connectors`, `/ingestion-jobs`, and `/campaign-board`.
 6. Open `/enterprise-maturity` and click **Build all 10**.
-7. Open `/operating-system` and `/governance` to review closed-loop maturity.
+7. Open `/pilot-control-plane` and click **Activate all 10**.
+8. Open `/operating-system` and `/governance` to review closed-loop maturity.
 
 ## Commands
 

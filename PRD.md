@@ -53,6 +53,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Remediation campaigns and campaign board
 - Closed-loop operating-system view
 - Enterprise maturity command center
+- Pilot control plane for production-pilot activation
 
 ## Enterprise Maturity Requirements
 
@@ -73,6 +74,25 @@ The product must operationalize ten advanced maturity tracks:
 
 `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` must create the baseline operating layer for all ten tracks while keeping execution in dry-run mode.
 
+## Production-Pilot Requirements
+
+The product must also support the next ten pilot-grade operating capabilities:
+
+| Capability | Requirement |
+| --- | --- |
+| Real scanner connectors | Configure Tenable, Qualys, Wiz, Snyk, GitHub Advanced Security, and AWS Security Hub connector profiles with health and dry-run checks. |
+| True simulation engine | Run simulations across open remediation actions and calculate confidence, risk reduction, operational risk, affected assets, rollout, rollback, and validation guidance. |
+| Remediation playbook library | Map remediation actions to reusable playbooks for patch rollout, container rebuild, IAM least privilege, Kubernetes policy, cloud controls, and exceptions. |
+| Policy-as-code | Persist enforceable controls for auto-approval, freeze windows, evidence gates, crown-jewel manual approval, and duplicate suppression. |
+| Approval workbench | Create routed workflow items with service-owner, security, risk-owner, and CAB approval trails. |
+| Jira, GitHub, and ServiceNow execution | Produce durable connector-run records for external ticket, pull request, and change-management dry runs. |
+| Evidence vault | Generate before-state, simulation, execution-log, and validation artifacts and expose evidence-pack readiness. |
+| AI remediation planner | Generate deterministic remediation plans and executive summaries from tenant data that can later be backed by an LLM provider. |
+| Executive dashboards | Refresh reports and campaign metrics for leadership-level debt, SLA, evidence, automation, and readiness reporting. |
+| Production SaaS layer | Prepare SSO/OIDC, RBAC bindings, tenant isolation, audit trail, dry-run workers, and hardening controls. |
+
+`POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` must activate these capabilities from existing tenant data, avoid raw secret storage, and keep all execution in dry-run mode until live credentials and policy approvals are configured.
+
 ## Primary Routes
 
 - `/`
@@ -87,6 +107,7 @@ The product must operationalize ten advanced maturity tracks:
 - `/ingestion-jobs`
 - `/campaign-board`
 - `/operating-system`
+- `/pilot-control-plane`
 - `/enterprise-maturity`
 - `/governance`
 - `/enterprise`
@@ -104,6 +125,7 @@ The product must operationalize ten advanced maturity tracks:
 - Risk-reduction potential
 - Auto-approval eligibility
 - Enterprise maturity score
+- Pilot readiness score
 
 ## Non-Goals
 

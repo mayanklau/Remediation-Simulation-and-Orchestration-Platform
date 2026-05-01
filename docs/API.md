@@ -51,6 +51,8 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `POST /api/connectors/run`
 - `GET /api/pilot-readiness`
 - `POST /api/pilot-readiness`
+- `GET /api/pilot-control-plane`
+- `POST /api/pilot-control-plane`
 
 `POST /api/pilot-readiness` supports:
 
@@ -58,6 +60,32 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `start_ingestion`
 
 Connector operations create durable run records for Jira, GitHub, ServiceNow, Tenable, Qualys, Wiz, Snyk, AWS Security Hub, Kubernetes, and related enterprise flows.
+
+## Pilot Control Plane
+
+- `GET /api/pilot-control-plane`
+- `POST /api/pilot-control-plane`
+
+`GET /api/pilot-control-plane` returns production-pilot readiness across:
+
+- Real scanner connectors
+- True simulation engine
+- Remediation playbook library
+- Policy-as-code
+- Approval workbench
+- Jira, GitHub, and ServiceNow execution
+- Evidence vault
+- AI remediation planner
+- Executive dashboards
+- Production SaaS layer
+
+`POST /api/pilot-control-plane` accepts:
+
+```json
+{ "action": "activate_all_10" }
+```
+
+It configures scanner connector profiles, performs dry-run connector operations, writes policy-as-code rules, creates execution hooks, runs simulations and plan generation for open remediation actions, routes approvals, attaches evidence artifacts, generates evidence packs, starts dry-run automation records, refreshes reports and campaigns, prepares SSO/RBAC readiness, and writes an audit entry.
 
 ## Enterprise Maturity
 
