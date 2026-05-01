@@ -21,10 +21,12 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 - CI/CD, Kubernetes, cloud, IAM, and policy-fix dry-run automation hooks
 - Risk exceptions, freeze windows, auto-approval policies, and evidence gates
 - Continuous simulation, predictive residual risk, and policy-governed fixes
+- Virtual patching and attack-path breaker controls
 - Self-updating remediation campaigns and campaign board
 - Enterprise maturity command center for the ten advanced capability tracks
 - Pilot control plane for the next ten production-pilot capabilities
 - Final production completion center with deploy, security, worker, evidence, observability, and hardening controls
+- Production operations control room with sessions, SSO, live connector dry-runs, workers, evidence sealing, telemetry, CI, and migrations
 
 ## Main Routes
 
@@ -43,62 +45,24 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 | `/campaign-board` | Campaign operating board |
 | `/operating-system` | Closed-loop remediation control plane |
 | `/pilot-control-plane` | Production-pilot activation for the next ten capabilities |
+| `/virtual-patching` | Virtual patching and attack-path breaker control center |
 | `/final-production` | Final production readiness and deployment closure |
+| `/production-ops` | Runtime workers, telemetry, evidence sealing, live connector dry-runs, and SSO/session operations |
 | `/enterprise-maturity` | Ten-track maturity command center |
 | `/governance` | Autonomous remediation governance |
 | `/enterprise` | SSO, RBAC, and enterprise readiness |
 | `/audit` | Audit timeline |
 
-## Enterprise Maturity Tracks
+## Virtual Patching And Path Breakers
 
-The `/enterprise-maturity` command center operationalizes all ten advanced roadmap areas:
+The `/virtual-patching` control center adds production protection before permanent remediation:
 
-1. Real connector framework
-2. Simulation sandbox
-3. Policy engine
-4. Remediation campaign studio
-5. AI copilot upgrade
-6. Enterprise security layer
-7. Execution orchestration
-8. Evidence and compliance packs
-9. Maturity dashboards
-10. Production hardening
-
-Click **Build all 10** or call `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` to create connector profiles, connector health runs, governance guardrail policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, a maturity campaign, and an audit record from live tenant data.
-
-## Pilot Control Plane
-
-The `/pilot-control-plane` view moves the product from maturity tracking into pilot execution readiness for another ten concrete enterprise needs:
-
-1. Real scanner connectors
-2. True simulation engine
-3. Remediation playbook library
-4. Policy-as-code
-5. Approval workbench
-6. Jira, GitHub, and ServiceNow execution
-7. Evidence vault
-8. AI remediation planner
-9. Executive dashboards
-10. Production SaaS layer
-
-Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` to configure scanner connector profiles, run dry-run connector checks, create policy-as-code controls, attach simulation and plan records, route approval workflows, generate evidence artifacts, create dry-run execution records, refresh dashboards, configure SSO/RBAC readiness, and write an audit event.
-
-## Final Production Closure
-
-The `/final-production` center closes the final ten production requirements:
-
-1. Database and migrations
-2. Auth, SSO, and RBAC
-3. Connector secret references
-4. Background worker lanes
-5. Live integration runway
-6. Executable policy runtime
-7. Evidence vault and retention
-8. Observability and operations
-9. Enterprise deployment
-10. Security hardening
-
-Click **Finalize readiness** or call `POST /api/final-production` with `{ "action": "finalize" }` to create final production guardrail policies, worker execution lanes, rollback coordination, connector readiness checks, production campaign/report records, SSO/RBAC readiness, and an audit event.
+- identifies findings that need compensating controls when no safe patch is immediately available
+- recommends WAF, API gateway, service-mesh, cloud-policy, IAM, network, and admission-control virtual patches
+- finds dependency paths from exposed assets to high-value targets
+- proposes path breakers such as deny rules, microsegmentation, conditional IAM denies, and route quarantine
+- runs canary simulations and generates remediation plans for top candidates
+- creates dry-run execution records and auditable policies before live enforcement
 
 ## API Highlights
 
@@ -116,8 +80,19 @@ Click **Finalize readiness** or call `POST /api/final-production` with `{ "actio
 - `POST /api/pilot-readiness`
 - `GET /api/pilot-control-plane`
 - `POST /api/pilot-control-plane`
+- `GET /api/virtual-patching`
+- `POST /api/virtual-patching`
 - `GET /api/final-production`
 - `POST /api/final-production`
+- `GET /api/auth/session`
+- `POST /api/auth/session`
+- `GET /api/auth/sso/start`
+- `POST /api/auth/sso/callback`
+- `POST /api/connectors/live`
+- `POST /api/workers/run`
+- `POST /api/evidence/seal`
+- `GET /api/observability`
+- `POST /api/observability`
 - `GET /api/enterprise-maturity`
 - `POST /api/enterprise-maturity`
 - `GET /api/operating-system`
@@ -129,57 +104,3 @@ Click **Finalize readiness** or call `POST /api/final-production` with `{ "actio
 - `POST /api/governance/apply-fix`
 
 See [docs/API.md](docs/API.md) for more detail.
-
-## Quick Start
-
-```bash
-npm install
-cp .env.example .env
-npm run db:push
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-For build verification:
-
-```bash
-DATABASE_URL="file:./dev.db" npm run build
-```
-
-## Demo Flow
-
-1. Open `/` and load prototype data.
-2. Review findings, assets, and remediation actions.
-3. Run a simulation and generate a plan.
-4. Route a workflow and attach evidence.
-5. Open `/connectors`, `/ingestion-jobs`, and `/campaign-board`.
-6. Open `/enterprise-maturity` and click **Build all 10**.
-7. Open `/pilot-control-plane` and click **Activate all 10**.
-8. Open `/final-production` and click **Finalize readiness**.
-9. Open `/operating-system` and `/governance` to review closed-loop maturity.
-
-## Commands
-
-```bash
-npm run dev
-npm run typecheck
-npm test
-DATABASE_URL="file:./dev.db" npm run build
-npm run db:generate
-npm run db:push
-npm run db:deploy
-```
-
-## Production Notes
-
-For production, replace SQLite with a managed relational database, configure secret references for connector credentials, run ingestion and simulation in background workers, add OpenTelemetry traces, enforce environment-specific policy controls, and connect enterprise identity providers.
-
-## Documentation
-
-- [Product Requirements Document](PRD.md)
-- [API Reference](docs/API.md)
-- [Architecture Notes](docs/ARCHITECTURE.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-- [Security Model](docs/SECURITY.md)
-- [Runbook](docs/RUNBOOK.md)

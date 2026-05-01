@@ -18,7 +18,8 @@ import {
   Cable,
   ClipboardList,
   Columns3,
-  Rocket
+  Rocket,
+  ServerCog
 } from "lucide-react";
 import "./globals.css";
 
@@ -47,7 +48,9 @@ const nav = [
   { href: "/campaigns", label: "Campaigns", icon: Bot },
   { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
   { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
+  { href: "/virtual-patching", label: "Virtual Patch", icon: ShieldCheck },
   { href: "/final-production", label: "Final Prod", icon: ShieldCheck },
+  { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
   { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
   { href: "/governance", label: "Governance", icon: ShieldCheck },
   { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
