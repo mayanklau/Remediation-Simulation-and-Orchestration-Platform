@@ -21,6 +21,28 @@ npm test
 npm run build
 ```
 
+## Finalize Production Readiness
+
+1. Configure required variables from `.env.example`.
+2. Open `/enterprise-maturity` and click **Build all 10**.
+3. Open `/pilot-control-plane` and click **Activate all 10**.
+4. Open `/final-production` and click **Finalize readiness**.
+5. Review external setup remaining and configure live identity, secrets, object storage, telemetry, and integration credentials.
+
+The platform keeps live execution disabled until credentials and policy approvals are configured.
+
+## Production Compose
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+Then run database migrations with:
+
+```bash
+npm run db:deploy
+```
+
 ## Ingest a Finding
 
 ```bash

@@ -24,6 +24,7 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 - Self-updating remediation campaigns and campaign board
 - Enterprise maturity command center for the ten advanced capability tracks
 - Pilot control plane for the next ten production-pilot capabilities
+- Final production completion center with deploy, security, worker, evidence, observability, and hardening controls
 
 ## Main Routes
 
@@ -42,6 +43,7 @@ It ingests vulnerability, cloud, identity, infrastructure, application, and comp
 | `/campaign-board` | Campaign operating board |
 | `/operating-system` | Closed-loop remediation control plane |
 | `/pilot-control-plane` | Production-pilot activation for the next ten capabilities |
+| `/final-production` | Final production readiness and deployment closure |
 | `/enterprise-maturity` | Ten-track maturity command center |
 | `/governance` | Autonomous remediation governance |
 | `/enterprise` | SSO, RBAC, and enterprise readiness |
@@ -81,6 +83,23 @@ The `/pilot-control-plane` view moves the product from maturity tracking into pi
 
 Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` to configure scanner connector profiles, run dry-run connector checks, create policy-as-code controls, attach simulation and plan records, route approval workflows, generate evidence artifacts, create dry-run execution records, refresh dashboards, configure SSO/RBAC readiness, and write an audit event.
 
+## Final Production Closure
+
+The `/final-production` center closes the final ten production requirements:
+
+1. Database and migrations
+2. Auth, SSO, and RBAC
+3. Connector secret references
+4. Background worker lanes
+5. Live integration runway
+6. Executable policy runtime
+7. Evidence vault and retention
+8. Observability and operations
+9. Enterprise deployment
+10. Security hardening
+
+Click **Finalize readiness** or call `POST /api/final-production` with `{ "action": "finalize" }` to create final production guardrail policies, worker execution lanes, rollback coordination, connector readiness checks, production campaign/report records, SSO/RBAC readiness, and an audit event.
+
 ## API Highlights
 
 - `GET /api/dashboard`
@@ -97,6 +116,8 @@ Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "actio
 - `POST /api/pilot-readiness`
 - `GET /api/pilot-control-plane`
 - `POST /api/pilot-control-plane`
+- `GET /api/final-production`
+- `POST /api/final-production`
 - `GET /api/enterprise-maturity`
 - `POST /api/enterprise-maturity`
 - `GET /api/operating-system`
@@ -135,7 +156,8 @@ DATABASE_URL="file:./dev.db" npm run build
 5. Open `/connectors`, `/ingestion-jobs`, and `/campaign-board`.
 6. Open `/enterprise-maturity` and click **Build all 10**.
 7. Open `/pilot-control-plane` and click **Activate all 10**.
-8. Open `/operating-system` and `/governance` to review closed-loop maturity.
+8. Open `/final-production` and click **Finalize readiness**.
+9. Open `/operating-system` and `/governance` to review closed-loop maturity.
 
 ## Commands
 
@@ -146,6 +168,7 @@ npm test
 DATABASE_URL="file:./dev.db" npm run build
 npm run db:generate
 npm run db:push
+npm run db:deploy
 ```
 
 ## Production Notes
@@ -157,4 +180,6 @@ For production, replace SQLite with a managed relational database, configure sec
 - [Product Requirements Document](PRD.md)
 - [API Reference](docs/API.md)
 - [Architecture Notes](docs/ARCHITECTURE.md)
+- [Deployment Guide](docs/DEPLOYMENT.md)
+- [Security Model](docs/SECURITY.md)
 - [Runbook](docs/RUNBOOK.md)
