@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    environment:
+      DATABASE_URL: "file:./dev.db"
+      APP_URL: "http://localhost:3000"
+      DEFAULT_TENANT_SLUG: "default"
+    ports:
+      - "3000:3000"
+    volumes:
+      - app-data:/app/prisma
+
+volumes:
+  app-data:

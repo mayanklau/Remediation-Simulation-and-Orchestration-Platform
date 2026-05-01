@@ -1,0 +1,295 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users              User[]
+  teams              Team[]
+  assets             Asset[]
+  findings           Finding[]
+  sourceFindings     SourceFinding[]
+  remediationActions RemediationAction[]
+  simulations        Simulation[]
+  workflowItems      WorkflowItem[]
+  approvals          Approval[]
+  evidenceArtifacts  EvidenceArtifact[]
+  auditLogs          AuditLog[]
+  integrations       Integration[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  tenantId  String
+  email     String
+  name      String
+  role      String   @default("security_analyst")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant                Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  ownedAssets           Asset[]        @relation("AssetTechnicalOwner")
+  assignedWorkflowItems WorkflowItem[] @relation("WorkflowAssignee")
+
+  @@unique([tenantId, email])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assets Asset[]
+
+  @@unique([tenantId, slug])
+}
+
+model Asset {
+  id               String      @id @default(cuid())
+  tenantId         String
+  externalId       String
+  name             String
+  type             String      @default("OTHER")
+  environment      String      @default("UNKNOWN")
+  provider         String?
+  region           String?
+  criticality      Int         @default(3)
+  dataSensitivity  Int         @default(3)
+  internetExposure Boolean     @default(false)
+  complianceScope  String?
+  tagsJson         String      @default("{}")
+  metadataJson     String      @default("{}")
+  teamId           String?
+  technicalOwnerId String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  team              Team?               @relation(fields: [teamId], references: [id])
+  technicalOwner    User?               @relation("AssetTechnicalOwner", fields: [technicalOwnerId], references: [id])
+  findings          Finding[]
+  relationshipsFrom AssetRelationship[] @relation("RelationshipFrom")
+  relationshipsTo   AssetRelationship[] @relation("RelationshipTo")
+
+  @@unique([tenantId, externalId])
+  @@index([tenantId, type])
+  @@index([tenantId, environment])
+}
+
+model AssetRelationship {
+  id          String   @id @default(cuid())
+  tenantId    String
+  fromAssetId String
+  toAssetId   String
+  relation    String
+  confidence  Float    @default(0.5)
+  source      String   @default("manual")
+  createdAt   DateTime @default(now())
+
+  fromAsset Asset @relation("RelationshipFrom", fields: [fromAssetId], references: [id], onDelete: Cascade)
+  toAsset   Asset @relation("RelationshipTo", fields: [toAssetId], references: [id], onDelete: Cascade)
+
+  @@unique([fromAssetId, toAssetId, relation])
+}
+
+model Finding {
+  id                   String        @id @default(cuid())
+  tenantId             String
+  assetId              String?
+  title                String
+  description          String
+  severity             String
+  status               String        @default("OPEN")
+  cve                  String?
+  controlId            String?
+  category             String
+  source               String
+  scannerSeverity      String?
+  exploitAvailable     Boolean       @default(false)
+  activeExploitation   Boolean       @default(false)
+  patchAvailable       Boolean       @default(false)
+  compensatingControls String?
+  riskScore            Float         @default(0)
+  businessRiskScore    Float         @default(0)
+  riskExplanation      String        @default("")
+  fingerprint          String
+  firstSeenAt          DateTime      @default(now())
+  lastSeenAt           DateTime      @default(now())
+  dueAt                DateTime?
+  metadataJson         String        @default("{}")
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  asset              Asset?              @relation(fields: [assetId], references: [id])
+  sourceFindings     SourceFinding[]
+  remediationActions RemediationAction[]
+
+  @@unique([tenantId, fingerprint])
+  @@index([tenantId, severity])
+  @@index([tenantId, status])
+  @@index([tenantId, riskScore])
+}
+
+model SourceFinding {
+  id             String   @id @default(cuid())
+  tenantId       String
+  findingId      String?
+  source         String
+  sourceId       String
+  rawPayloadJson String
+  confidence     Float    @default(0.7)
+  ingestedAt     DateTime @default(now())
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  finding Finding? @relation(fields: [findingId], references: [id])
+
+  @@unique([tenantId, source, sourceId])
+}
+
+model RemediationAction {
+  id                    String            @id @default(cuid())
+  tenantId              String
+  findingId             String
+  title                 String
+  summary               String
+  actionType            String
+  proposedChangeJson    String
+  status                String   @default("NEW")
+  ownerHint             String?
+  complexity            Int               @default(3)
+  expectedRiskReduction Float             @default(0)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  tenant        Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  finding       Finding           @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  simulations   Simulation[]
+  plans         RemediationPlan[]
+  workflowItems WorkflowItem[]
+
+  @@index([tenantId, status])
+}
+
+model Simulation {
+  id                    String           @id @default(cuid())
+  tenantId              String
+  remediationActionId   String
+  type                  String
+  status                String   @default("QUEUED")
+  inputJson             String
+  resultJson            String?
+  confidence            Float            @default(0)
+  riskReductionEstimate Float            @default(0)
+  operationalRisk       Float            @default(0)
+  explanation           String           @default("")
+  startedAt             DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime         @default(now())
+
+  tenant            Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  remediationAction RemediationAction @relation(fields: [remediationActionId], references: [id], onDelete: Cascade)
+}
+
+model RemediationPlan {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  remediationActionId String
+  title               String
+  summary             String
+  planJson            String
+  createdBy           String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  remediationAction RemediationAction @relation(fields: [remediationActionId], references: [id], onDelete: Cascade)
+}
+
+model WorkflowItem {
+  id                  String            @id @default(cuid())
+  tenantId            String
+  remediationActionId String
+  assigneeId          String?
+  status              String   @default("NEW")
+  priority            Int               @default(3)
+  dueAt               DateTime?
+  commentsJson        String            @default("[]")
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  remediationAction RemediationAction  @relation(fields: [remediationActionId], references: [id], onDelete: Cascade)
+  assignee          User?              @relation("WorkflowAssignee", fields: [assigneeId], references: [id])
+  approvals         Approval[]
+  evidenceArtifacts EvidenceArtifact[]
+}
+
+model Approval {
+  id             String         @id @default(cuid())
+  tenantId       String
+  workflowItemId String
+  approverEmail  String
+  status         String   @default("PENDING")
+  decisionReason String?
+  decidedAt      DateTime?
+  createdAt      DateTime       @default(now())
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflowItem WorkflowItem @relation(fields: [workflowItemId], references: [id], onDelete: Cascade)
+}
+
+model EvidenceArtifact {
+  id             String       @id @default(cuid())
+  tenantId       String
+  workflowItemId String
+  type           String
+  title          String
+  contentJson    String
+  createdAt      DateTime     @default(now())
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflowItem WorkflowItem @relation(fields: [workflowItemId], references: [id], onDelete: Cascade)
+}
+
+model Integration {
+  id         String   @id @default(cuid())
+  tenantId   String
+  provider   String
+  name       String
+  enabled    Boolean  @default(true)
+  configJson String   @default("{}")
+  healthJson String   @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  actor       String
+  action      String
+  entityType  String
+  entityId    String
+  detailsJson String   @default("{}")
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, entityType, entityId])
+}
