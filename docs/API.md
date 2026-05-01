@@ -85,6 +85,12 @@ Supported headers include:
 - `POST /api/remediation-actions/:id/plan`
 - `POST /api/remediation-actions/:id/workflow`
 
+## Prototype Data
+
+- `POST /api/mock-ingest`
+
+Loads representative enterprise findings and asset relationships for Phase 0 demonstrations.
+
 ## Workflows
 
 - `GET /api/workflows`
@@ -99,3 +105,42 @@ Supported headers include:
 `POST /api/copilot`
 
 The current implementation is deterministic and tenant-scoped. It is structured so an LLM provider can be added behind the same contract without allowing uncontrolled execution.
+
+## Enterprise Readiness
+
+- `GET /api/sso`
+- `POST /api/sso`
+- `GET /api/rbac/evaluate`
+- `POST /api/rbac/evaluate`
+- `GET /api/connectors/run`
+- `POST /api/connectors/run`
+
+Connector operations create durable run records for Jira, GitHub, ServiceNow, scanner, cloud, and Kubernetes flows. They are deterministic by default so enterprise pilots can validate orchestration contracts before credentials are connected.
+
+## Reporting
+
+- `GET /api/reports`
+- `POST /api/reports`
+
+Creates executive remediation snapshots from live tenant data.
+
+## Automation
+
+- `GET /api/automation/hooks`
+- `POST /api/automation/hooks`
+- `GET /api/automation/run`
+- `POST /api/automation/run`
+
+Supported run types are `ci_cd`, `kubernetes`, `cloud`, `iam`, and `policy_fix`.
+
+## Governance
+
+- `GET /api/policies`
+- `POST /api/policies`
+- `POST /api/governance/continuous-simulation`
+- `GET /api/governance/predictive-risk`
+- `POST /api/governance/apply-fix`
+- `GET /api/campaigns`
+- `POST /api/campaigns`
+
+Governance APIs support risk-based auto-approval policies, continuous simulation, predictive residual risk, policy-governed fixes, and self-refreshing remediation campaigns.

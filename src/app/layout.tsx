@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import {
   Activity,
   Boxes,
+  Bot,
   CheckCircle2,
   FileCheck,
   GitPullRequestArrow,
   LayoutDashboard,
   Network,
+  ShieldCheck,
+  SlidersHorizontal,
+  TrendingUp,
   Settings,
   ShieldAlert
 } from "lucide-react";
@@ -26,6 +30,11 @@ const nav = [
   { href: "/workflows", label: "Approvals", icon: CheckCircle2 },
   { href: "/evidence", label: "Evidence", icon: FileCheck },
   { href: "/integrations", label: "Integrations", icon: Activity },
+  { href: "/reports", label: "Reports", icon: TrendingUp },
+  { href: "/automation", label: "Automation", icon: SlidersHorizontal },
+  { href: "/campaigns", label: "Campaigns", icon: Bot },
+  { href: "/governance", label: "Governance", icon: ShieldCheck },
+  { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
   { href: "/settings", label: "Settings", icon: Settings }
 ];
 

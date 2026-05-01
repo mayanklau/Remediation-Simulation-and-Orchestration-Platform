@@ -1,8 +1,11 @@
 import { PageHeader } from "@/components/PageHeader";
 import { EmptyState } from "@/components/EmptyState";
 import { SeverityBadge } from "@/components/SeverityBadge";
+import { ApiButton } from "@/components/ApiButton";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateDefaultTenant } from "@/lib/tenant";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const tenant = await getOrCreateDefaultTenant();
@@ -27,7 +30,9 @@ export default async function DashboardPage() {
         eyebrow="Enterprise control plane"
         title="Remediation command center"
         description="Prioritize findings, simulate fixes, orchestrate approvals, and preserve audit evidence from live enterprise data."
-      />
+      >
+        <ApiButton path="/api/mock-ingest" label="Load prototype data" />
+      </PageHeader>
       <section className="grid cols-4">
         <Metric label="Open findings" value={openFindings} />
         <Metric label="Critical findings" value={criticalFindings} />

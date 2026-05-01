@@ -26,6 +26,14 @@ model Tenant {
   evidenceArtifacts  EvidenceArtifact[]
   auditLogs          AuditLog[]
   integrations       Integration[]
+  ssoConfigurations  SsoConfiguration[]
+  roleBindings       RoleBinding[]
+  reportSnapshots    ReportSnapshot[]
+  connectorRuns      ConnectorRun[]
+  executionHooks     ExecutionHook[]
+  automationRuns     AutomationRun[]
+  policies           Policy[]
+  campaigns          RemediationCampaign[]
 }
 
 model User {
@@ -277,6 +285,153 @@ model Integration {
   updatedAt  DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model SsoConfiguration {
+  id                     String   @id @default(cuid())
+  tenantId               String
+  provider               String
+  enabled                Boolean  @default(false)
+  metadataUrl            String?
+  entityId               String?
+  callbackUrl            String?
+  certificateFingerprint String?
+  settingsJson           String   @default("{}")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, provider])
+}
+
+model RoleBinding {
+  id             String   @id @default(cuid())
+  tenantId       String
+  subjectType    String
+  subject        String
+  role           String
+  scope          String   @default("tenant")
+  constraintsJson String @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, subjectType, subject, role, scope])
+  @@index([tenantId, subject])
+}
+
+model ReportSnapshot {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  type        String
+  periodStart DateTime?
+  periodEnd   DateTime?
+  dataJson    String   @default("{}")
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+  @@index([tenantId, createdAt])
+}
+
+model ConnectorRun {
+  id          String   @id @default(cuid())
+  tenantId    String
+  provider    String
+  operation   String
+  status      String   @default("QUEUED")
+  requestJson String   @default("{}")
+  resultJson  String   @default("{}")
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, provider])
+  @@index([tenantId, status])
+}
+
+model ExecutionHook {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  hookType    String
+  enabled     Boolean  @default(true)
+  configJson  String   @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, name])
+  @@index([tenantId, hookType])
+}
+
+model AutomationRun {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  remediationActionId String?
+  policyId            String?
+  hookId              String?
+  runType             String
+  status              String   @default("QUEUED")
+  approvalMode        String   @default("manual")
+  inputJson           String   @default("{}")
+  outputJson          String   @default("{}")
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy Policy? @relation(fields: [policyId], references: [id])
+
+  @@index([tenantId, runType])
+  @@index([tenantId, status])
+}
+
+model Policy {
+  id             String   @id @default(cuid())
+  tenantId       String
+  name           String
+  policyType     String
+  enabled        Boolean  @default(true)
+  rulesJson      String   @default("{}")
+  enforcementMode String @default("advisory")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  automationRuns AutomationRun[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId, policyType])
+}
+
+model RemediationCampaign {
+  id             String   @id @default(cuid())
+  tenantId       String
+  name           String
+  objective      String
+  status         String   @default("PLANNED")
+  owner          String?
+  criteriaJson   String   @default("{}")
+  planJson       String   @default("{}")
+  metricsJson    String   @default("{}")
+  startsAt       DateTime?
+  endsAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, name])
+  @@index([tenantId, status])
 }
 
 model AuditLog {
