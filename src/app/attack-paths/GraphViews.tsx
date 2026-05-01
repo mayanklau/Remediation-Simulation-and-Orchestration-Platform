@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 type Path = {
   id: string;
   name: string;
@@ -126,7 +128,7 @@ function buildEdges(paths: Path[], nodes: Array<{ id: string; label: string }>) 
   ]);
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: Record<string, CSSProperties> = {
   board: { display: "grid", gridTemplateColumns: "minmax(180px,.8fr) minmax(360px,1.5fr) minmax(220px,1fr)", gap: 14 },
   column: { display: "grid", gap: 10, alignContent: "start", minHeight: 220, border: "1px solid #d9e1ea", borderRadius: 8, padding: 12, background: "#f8fafc" },
   columnTitle: { color: "#64748b", fontSize: 12, fontWeight: 700, textTransform: "uppercase" },
