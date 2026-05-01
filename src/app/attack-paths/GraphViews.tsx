@@ -14,6 +14,8 @@ type Path = {
   recommendedBreakers: string[];
 };
 
+type GraphNodeModel = { id?: string; label: string; kind: string; group: string; risk: number };
+
 export function AttackPathGraphViews({ paths }: { paths: Path[] }) {
   const nodes = buildNodes(paths);
   const edges = buildEdges(paths, nodes);
@@ -94,7 +96,7 @@ export function AttackPathGraphViews({ paths }: { paths: Path[] }) {
   );
 }
 
-function GraphNode({ node, compact = false }: { node: { label: string; kind: string; group: string; risk: number }; compact?: boolean }) {
+function GraphNode({ node, compact = false }: { node: GraphNodeModel; compact?: boolean }) {
   const border = node.kind === "target" ? "#b42318" : node.kind === "finding" ? "#b54708" : node.kind === "breaker" ? "#067647" : "#0f766e";
   return (
     <div style={{ ...styles.node, ...(compact ? styles.compactNode : {}), borderLeftColor: border }}>
