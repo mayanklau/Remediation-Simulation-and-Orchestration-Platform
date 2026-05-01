@@ -1,29 +1,14 @@
 import { apiHandler } from "@/lib/api";
-import { prisma } from "@/lib/prisma";
-import { resolveTenantId } from "@/lib/tenant";
+import { requirePermission } from "@/lib/authz";
+import { getFindingList } from "@/services/finding-service";
 
 export const GET = apiHandler(async (request) => {
-  const tenantId = await resolveTenantId(request);
+  const authz = await requirePermission(request, "finding:read");
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get("status") ?? undefined;
-  const severity = searchParams.get("severity") ?? undefined;
-  const findings = await prisma.finding.findMany({
-    where: {
-      tenantId,
-      ...(status ? { status: status as never } : {}),
-      ...(severity ? { severity: severity as never } : {})
-    },
-    include: {
-      asset: true,
-      remediationActions: {
-        include: {
-          simulations: { orderBy: { createdAt: "desc" }, take: 1 },
-          workflowItems: { orderBy: { createdAt: "desc" }, take: 1 }
-        }
-      }
-    },
-    orderBy: [{ businessRiskScore: "desc" }, { riskScore: "desc" }],
-    take: 200
+  const findings = await getFindingList({
+    tenantId: authz.tenantId,
+    status: searchParams.get("status") ?? undefined,
+    severity: searchParams.get("severity") ?? undefined
   });
-  return Response.json({ findings });
+  return Response.json({ findings, correlationId: authz.correlationId });
 });
