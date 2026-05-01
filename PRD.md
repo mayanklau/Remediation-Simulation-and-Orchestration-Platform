@@ -216,6 +216,13 @@ The product must provide the final operational controls required to run a seriou
 - Simulation coverage
 - Approval coverage
 - Evidence coverage
+- Scanner-family graph readiness
+- Asset-mapping coverage by scanner family
+- Exploit-signal and remediation-signal coverage
+- Customer-ready attack paths
+- Executive attack-path escalations
+- Subject-maturity score
+- Development release-confidence score
 - Campaign execution readiness
 - Risk-reduction potential
 - Auto-approval eligibility

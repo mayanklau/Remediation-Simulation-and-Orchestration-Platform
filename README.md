@@ -94,6 +94,17 @@ What it does:
 - recommends path breakers such as WAF/API gateway virtual patches, microsegmentation, conditional IAM denies, route quarantine, and database access restriction
 - snapshots attack-path analytics as evidence-ready report records
 
+### Maturity Additions
+
+The attack-path engine now includes production maturity controls that make the module useful beyond a prototype:
+
+- scanner-family coverage across vulnerability scanners, cloud posture, code security, IAM, network/Kubernetes, and compliance sources
+- asset-mapping, exploit-signal, and remediation-signal coverage percentages before paths are trusted
+- decision-readiness scoring for customer-ready paths, executive escalations, difficulty, likelihood, and business impact
+- subject-maturity checks for scanner normalization, reachability, exploit preconditions, before/after residual risk, path difficulty, breaker controls, evidence, and validation
+- development-maturity gates for tenant-scoped access, deterministic graph contracts, policy guardrails, simulation evidence, explainability, and audit snapshots
+- per-path evidence requirements, validation plans, and customer-facing before/after risk narratives
+
 The construction method is intentionally scanner-agnostic. Tenable, Qualys, Wiz, Snyk, GitHub Advanced Security, AWS Security Hub, Kubernetes, IAM, cloud configuration, and custom CSV/API feeds can all produce chain steps as long as they provide asset, category, severity, exploitability, and remediation signals.
 
 ## Virtual Patching And Path Breakers

@@ -39,6 +39,63 @@ export default async function AttackPathsPage() {
         </div>
       </section>
 
+      <section className="grid cols-2" style={{ marginTop: 16 }}>
+        <div className="panel">
+          <div className="stack-head">
+            <div>
+              <h2>Scanner Coverage</h2>
+              <p>Readiness by scanner family for asset mapping, exploit signals, remediation signals, and graph construction.</p>
+            </div>
+            <StatusBadge value={`${analytics.subjectMaturity.score}% subject maturity`} />
+          </div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Family</th>
+                <th>Findings</th>
+                <th>Mapping</th>
+                <th>Exploit</th>
+                <th>Remediation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {analytics.scannerCoverage.map((coverage) => (
+                <tr key={coverage.family}>
+                  <td>
+                    <strong>{coverage.family}</strong>
+                    <div className="muted">{coverage.readyForAttackGraph ? "graph ready" : "needs more mapping"}</div>
+                  </td>
+                  <td>{coverage.findings}</td>
+                  <td>{coverage.assetMappingCoverage}%</td>
+                  <td>{coverage.exploitSignalCoverage}%</td>
+                  <td>{coverage.remediationSignalCoverage}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="panel">
+          <div className="stack-head">
+            <div>
+              <h2>Decision Readiness</h2>
+              <p>Customer-facing evidence that separates theoretical vulnerability volume from actionable path risk.</p>
+            </div>
+            <StatusBadge value={analytics.decisionReadiness.recommendedDecision} />
+          </div>
+          <table className="table">
+            <tbody>
+              <tr><td>Customer Ready Paths</td><td>{analytics.decisionReadiness.customerReadyPaths}</td></tr>
+              <tr><td>Executive Escalations</td><td>{analytics.decisionReadiness.immediateExecutiveEscalations}</td></tr>
+              <tr><td>Average Difficulty</td><td>{analytics.decisionReadiness.averageDifficultyScore}%</td></tr>
+              <tr><td>Average Likelihood</td><td>{analytics.decisionReadiness.averageLikelihood}%</td></tr>
+              <tr><td>Business Impact</td><td>{analytics.decisionReadiness.averageBusinessImpact}%</td></tr>
+              <tr><td>Release Confidence</td><td>{analytics.developmentMaturity.releaseConfidence}%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="panel">
         <div className="stack-head">
           <div>
@@ -111,6 +168,7 @@ export default async function AttackPathsPage() {
               <th>After</th>
               <th>Delta</th>
               <th>Scanners</th>
+              <th>Evidence</th>
               <th>Priority</th>
             </tr>
           </thead>
@@ -127,6 +185,7 @@ export default async function AttackPathsPage() {
                 <td>{path.afterRemediationRisk}%</td>
                 <td>{path.riskDelta}%</td>
                 <td>{path.scannerInputs.join(", ")}</td>
+                <td>{path.evidenceRequirements.slice(0, 3).join(", ")}</td>
                 <td><StatusBadge value={path.remediationPriority} /></td>
               </tr>
             ))}
