@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { can } from "@/domain/rbac";
+import { routePermissionFor } from "@/lib/route-permissions";
 
 const rateLimits = new Map<string, { count: number; resetAt: number }>();
 
 export function middleware(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
+  const correlationId = request.headers.get("x-correlation-id") ?? requestId;
   const rate = checkRateLimit(`${request.headers.get("x-forwarded-for") ?? "local"}:${request.nextUrl.pathname}`);
   if (!rate.allowed) {
     return Response.json(
@@ -16,6 +20,16 @@ export function middleware(request: NextRequest) {
         }
       }
     );
+  }
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const permission = routePermissionFor(request.nextUrl.pathname, request.method);
+    const role = request.headers.get("x-role") ?? (process.env.NODE_ENV === "production" ? "anonymous" : "tenant_admin");
+    if (!can(role, permission)) {
+      return Response.json(
+        { error: "forbidden", permission, requestId, correlationId },
+        { status: 403, headers: { "x-request-id": requestId, "x-correlation-id": correlationId } }
+      );
+    }
   }
   if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method) && process.env.NODE_ENV === "production") {
     const session = request.cookies.get("rt_session")?.value;
@@ -32,6 +46,8 @@ export function middleware(request: NextRequest) {
   response.headers.set("x-remediation-twin-route", request.nextUrl.pathname);
   response.headers.set("x-ratelimit-remaining", String(rate.remaining));
   response.headers.set("x-ratelimit-reset", String(rate.resetAt));
+  response.headers.set("x-request-id", requestId);
+  response.headers.set("x-correlation-id", correlationId);
   if (process.env.NODE_ENV === "production") {
     response.headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
   }

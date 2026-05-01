@@ -17,7 +17,10 @@
     "db:push": "prisma db push",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "db:backup": "node scripts/db-maintenance.mjs backup",
+    "db:restore": "node scripts/db-maintenance.mjs restore",
+    "db:index-check": "node scripts/db-maintenance.mjs check-indexes"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

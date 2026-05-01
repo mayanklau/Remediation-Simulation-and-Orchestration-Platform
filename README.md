@@ -32,9 +32,10 @@ Remediation Twin provides a full remediation operating loop:
 
 - Multi-tenant Next.js and Prisma application
 - Tenant-scoped APIs and persistence
-- SSO/OIDC production contract, signed sessions, tenant-boundary checks, and RBAC permission gates for sensitive APIs
+- SSO/OIDC production contract, signed sessions, tenant-boundary checks, and RBAC permission gates enforced through API middleware plus route handlers
 - Service, repository, DTO, and shared validation contracts for moving route handlers away from direct persistence logic
 - Queue-worker contracts for ingestion, simulation, connector sync, evidence generation, and report snapshots
+- Real Prisma migration baseline, seed-free fixture factories, database backup/restore commands, and index-check quality gate
 - Runtime configuration validation for local, dev, staging, and production with strict production checks
 - JSON, CSV, and prototype finding ingestion
 - Asset inventory and dependency graph
@@ -55,7 +56,8 @@ Remediation Twin provides a full remediation operating loop:
 - Worker runner for ingestion, simulation, evidence, connector sync, and automation
 - Evidence sealing with hash chaining and retention metadata
 - Observability, health checks, run records, and production telemetry
-- CI workflow, Docker Compose, production environment contract, baseline Prisma migration, dependency audit, and quality gates
+- CI workflow, Docker Compose, production environment contract, baseline Prisma migration, dependency audit, container scan, and quality gates
+- Frontend graph controls for filtering, zoom density, JSON export, empty states, and drill-down views
 
 ## Key Modules
 

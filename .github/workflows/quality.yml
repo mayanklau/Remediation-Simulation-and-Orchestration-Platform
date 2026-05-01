@@ -16,6 +16,14 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run db:index-check
       - run: DATABASE_URL="file:./ci.db" npm run db:push
       - run: DATABASE_URL="file:./ci.db" npm run build
       - run: npm audit --audit-level=high
+      - run: docker build -t remediation-twin:${{ github.sha }} .
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: remediation-twin:${{ github.sha }}
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
