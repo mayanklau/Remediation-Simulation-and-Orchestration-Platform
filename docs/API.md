@@ -114,8 +114,34 @@ The current implementation is deterministic and tenant-scoped. It is structured 
 - `POST /api/rbac/evaluate`
 - `GET /api/connectors/run`
 - `POST /api/connectors/run`
+- `GET /api/pilot-readiness`
+- `POST /api/pilot-readiness`
+- `GET /api/enterprise-maturity`
+- `POST /api/enterprise-maturity`
 
 Connector operations create durable run records for Jira, GitHub, ServiceNow, scanner, cloud, and Kubernetes flows. They are deterministic by default so enterprise pilots can validate orchestration contracts before credentials are connected.
+
+`GET /api/pilot-readiness` returns connector onboarding readiness, ingestion job history, campaign board metrics, duplicate-source reduction, and pilot operating-model guidance.
+
+`POST /api/pilot-readiness` supports two actions:
+
+- `create_connector` creates or updates a connector profile with auth mode, scopes, owner, environment, and sync cadence.
+- `start_ingestion` creates a durable dry-run scanner ingestion job with accepted, rejected, and error counts.
+
+`GET /api/enterprise-maturity` returns the ten-track maturity model:
+
+- Real connector framework
+- Simulation sandbox
+- Policy engine
+- Remediation campaign studio
+- AI copilot upgrade
+- Enterprise security layer
+- Execution orchestration
+- Evidence and compliance packs
+- Maturity dashboards
+- Production hardening
+
+`POST /api/enterprise-maturity` with `{ "action": "advance_all" }` creates connector profiles, connector health runs, governance guardrail policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, a maturity campaign, and an audit entry.
 
 ## Reporting
 

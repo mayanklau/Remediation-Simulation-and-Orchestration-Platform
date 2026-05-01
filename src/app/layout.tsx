@@ -14,13 +14,17 @@ import {
   SlidersHorizontal,
   TrendingUp,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  Cable,
+  ClipboardList,
+  Columns3,
+  Rocket
 } from "lucide-react";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Remediation Twin",
-  description: "Enterprise remediation simulation and orchestration platform"
+  description: "Enterprise remediation operating system"
 };
 
 const nav = [
@@ -28,15 +32,21 @@ const nav = [
   { href: "/findings", label: "Findings", icon: ShieldAlert },
   { href: "/assets", label: "Assets", icon: Boxes },
   { href: "/asset-graph", label: "Asset Graph", icon: Network },
+  { href: "/operating-system", label: "Control Plane", icon: Network },
   { href: "/remediation", label: "Remediation Queue", icon: GitPullRequestArrow },
   { href: "/simulations", label: "Simulations", icon: Network },
   { href: "/workflows", label: "Approvals", icon: CheckCircle2 },
   { href: "/evidence", label: "Evidence", icon: FileCheck },
   { href: "/integrations", label: "Integrations", icon: Activity },
+  { href: "/connectors", label: "Connectors", icon: Cable },
+  { href: "/ingestion-jobs", label: "Ingestion Jobs", icon: ClipboardList },
   { href: "/reports", label: "Reports", icon: TrendingUp },
   { href: "/automation", label: "Automation", icon: SlidersHorizontal },
   { href: "/policies", label: "Policies", icon: ClipboardCheck },
+  { href: "/exceptions", label: "Exceptions", icon: ScrollText },
   { href: "/campaigns", label: "Campaigns", icon: Bot },
+  { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
+  { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
   { href: "/governance", label: "Governance", icon: ShieldCheck },
   { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
   { href: "/audit", label: "Audit", icon: ScrollText },
