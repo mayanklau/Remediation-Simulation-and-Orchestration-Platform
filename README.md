@@ -4,114 +4,52 @@ Remediation Twin is an enterprise remediation operating system for turning chaot
 
 It ingests vulnerability, cloud, identity, infrastructure, application, and compliance findings; maps them to assets and ownership; scores business risk; simulates remediation impact before execution; generates rollout and rollback plans; routes approvals; tracks campaigns; and exports evidence.
 
-## Why It Exists
+## Implemented Product
 
-Enterprises rarely lack detection tools. They have too many findings, too many tickets, unclear ownership, duplicate remediation requests, uncertain production impact, and scattered audit evidence.
-
-Remediation Twin answers:
-
-- What should we fix first?
-- Which asset, service, owner, and business process is affected?
-- What could break if we apply the remediation?
-- Which approvals, exceptions, or freeze windows apply?
-- What is the safest rollout and rollback plan?
-- Can low-risk work be auto-approved under policy?
-- How do we prove remediation happened and reduced risk?
-
-## Implemented Capabilities
-
-- Multi-tenant backend with tenant-scoped APIs
-- JSON and CSV finding ingestion
-- Mock ingestion for demonstrations
-- Asset inventory and relationship mapping
-- Finding deduplication and source finding correlation
+- Multi-tenant Next.js and Prisma application
+- JSON, CSV, and prototype finding ingestion
+- Asset inventory and dependency graph
+- Finding deduplication and source correlation
 - Risk and business-risk scoring
 - Remediation action generation
-- Simulation engine for multiple remediation types
-- Rollout, validation, and rollback plan generation
-- Workflow approvals
-- Evidence capture and evidence readiness
+- Simulation engine for patch, network, IAM, cloud, and compliance actions
+- Rollout, rollback, validation, and evidence plan generation
+- Approval workflow, comments, decisions, and evidence capture
 - Jira, GitHub, ServiceNow, scanner, cloud, and Kubernetes connector run framework
-- Connector onboarding readiness matrix
-- Durable ingestion job operations
-- Deterministic AI copilot contract
-- SSO metadata configuration
-- Advanced RBAC permission catalog
-- Reporting snapshots
-- CI/CD, Kubernetes, cloud, and IAM automation dry-run hooks
-- Policy-governed automation and risk-based auto-approval
-- Continuous simulation
-- Predictive residual-risk modeling
-- Self-updating remediation campaigns
-- Campaign operating board
-- Autonomous remediation control plane
-- Enterprise maturity command center that advances all ten product maturity tracks
+- Connector onboarding and ingestion job readiness
+- SSO metadata, RBAC evaluation, audit timeline, and reporting
+- CI/CD, Kubernetes, cloud, IAM, and policy-fix dry-run automation hooks
+- Risk exceptions, freeze windows, auto-approval policies, and evidence gates
+- Continuous simulation, predictive residual risk, and policy-governed fixes
+- Self-updating remediation campaigns and campaign board
+- Enterprise maturity command center for the ten advanced capability tracks
+- Pilot control plane for the next ten production-pilot capabilities
 
-## Main Screens
+## Main Routes
 
-| Screen | Route | Purpose |
-| --- | --- | --- |
-| Dashboard | `/` | Executive remediation overview |
-| Findings | `/findings` | Finding backlog and detail |
-| Assets | `/assets` | Asset inventory |
-| Asset Graph | `/asset-graph` | Asset dependencies, exposure, and risk transfer |
-| Remediation Queue | `/remediation` | Generated remediation actions |
-| Simulations | `/simulations` | Simulation history and impact contracts |
-| Workflows | `/workflows` | Approval workflow |
-| Evidence | `/evidence` | Evidence records and readiness |
-| Integrations | `/integrations` | Integration registry |
-| Connectors | `/connectors` | Connector onboarding readiness |
-| Ingestion Jobs | `/ingestion-jobs` | Scanner/API ingestion job operations |
-| Reports | `/reports` | Executive reporting |
-| Automation | `/automation` | Execution hook dry runs |
-| Policies | `/policies` | Governance policy builder |
-| Exceptions | `/exceptions` | Risk exceptions and freeze windows |
-| Campaigns | `/campaigns` | Self-updating remediation campaigns |
-| Campaign Board | `/campaign-board` | Campaign operating board |
-| Maturity | `/enterprise-maturity` | Ten-track enterprise maturity command center |
-| Governance | `/governance` | Autonomous remediation governance |
-| Control Plane | `/operating-system` | Closed-loop remediation operating system |
-| Enterprise | `/enterprise` | SSO, RBAC, and connector readiness |
-| Audit | `/audit` | Unified audit timeline |
-| Settings | `/settings` | Tenant settings |
-
-## API Summary
-
-More detail is available in [docs/API.md](docs/API.md).
-
-| Area | Endpoints |
+| Route | Purpose |
 | --- | --- |
-| Health | `GET /api/health` |
-| Tenants | `GET /api/tenants`, `POST /api/tenants` |
-| Ingestion | `POST /api/ingest/json`, `POST /api/ingest/csv`, `POST /api/mock-ingest` |
-| Dashboard | `GET /api/dashboard` |
-| Assets | `GET /api/assets`, `POST /api/assets`, `GET /api/assets/:id` |
-| Findings | `GET /api/findings`, `GET /api/findings/:id` |
-| Remediation | `GET /api/remediation-actions`, `POST /api/remediation-actions/:id/simulate`, `POST /api/remediation-actions/:id/plan`, `POST /api/remediation-actions/:id/workflow` |
-| Workflows | `GET /api/workflows`, comments, approvals, decisions, evidence |
-| Integrations | `GET /api/integrations`, `POST /api/integrations`, `POST /api/connectors/run` |
-| Pilot Readiness | `GET /api/pilot-readiness`, `POST /api/pilot-readiness` |
-| Enterprise Maturity | `GET /api/enterprise-maturity`, `POST /api/enterprise-maturity` |
-| Copilot | `POST /api/copilot` |
-| Enterprise | `GET /api/sso`, `POST /api/sso`, `GET /api/rbac/evaluate`, `POST /api/rbac/evaluate` |
-| Reporting | `GET /api/reports`, `POST /api/reports` |
-| Automation | `GET /api/automation/hooks`, `POST /api/automation/hooks`, `GET /api/automation/run`, `POST /api/automation/run` |
-| Maturity | `GET /api/asset-graph`, `GET /api/operating-system`, `POST /api/operating-system`, `GET /api/evidence/packs`, `GET /api/audit/timeline` |
-| Governance | `GET /api/policies`, `POST /api/policies`, `POST /api/governance/continuous-simulation`, `GET /api/governance/predictive-risk`, `POST /api/governance/apply-fix`, `GET /api/campaigns`, `POST /api/campaigns` |
-
-## Phase Coverage
-
-| Phase | Goal | Implemented Surface |
-| --- | --- | --- |
-| Phase 0: Prototype | Prove concept with sample data and limited simulation | Mock ingestion, dashboard, asset mapping, risk scoring, simulation, plan generation |
-| Phase 1: Production MVP | Support real enterprise pilot | Multi-tenant backend, CSV/API ingestion, ingestion jobs, remediation queue, approvals, connector framework, evidence export |
-| Phase 2: Enterprise Readiness | Prepare for broader deployment | SSO, RBAC, connector onboarding, ServiceNow/scanner/cloud readiness, reporting, audit, scale-oriented indexes |
-| Phase 3: Automation Expansion | Expand execution orchestration | CI/CD, Kubernetes, cloud, IAM dry-run hooks, risk-aware approval mode |
-| Phase 4: Autonomous Governance | Enable trusted semi-autonomous remediation | Policy-governed fixes, continuous simulation, predictive risk, campaigns, control plane |
+| `/` | Executive dashboard |
+| `/findings` | Finding backlog |
+| `/assets` | Asset inventory |
+| `/asset-graph` | Asset dependency and risk-transfer map |
+| `/remediation` | Remediation queue |
+| `/simulations` | Simulation history |
+| `/workflows` | Approval workflow |
+| `/evidence` | Evidence readiness |
+| `/connectors` | Connector onboarding |
+| `/ingestion-jobs` | Durable ingestion operations |
+| `/campaign-board` | Campaign operating board |
+| `/operating-system` | Closed-loop remediation control plane |
+| `/pilot-control-plane` | Production-pilot activation for the next ten capabilities |
+| `/enterprise-maturity` | Ten-track maturity command center |
+| `/governance` | Autonomous remediation governance |
+| `/enterprise` | SSO, RBAC, and enterprise readiness |
+| `/audit` | Audit timeline |
 
 ## Enterprise Maturity Tracks
 
-The `/enterprise-maturity` command center turns the “what else can we do?” roadmap into ten measurable product tracks:
+The `/enterprise-maturity` command center operationalizes all ten advanced roadmap areas:
 
 1. Real connector framework
 2. Simulation sandbox
@@ -124,35 +62,52 @@ The `/enterprise-maturity` command center turns the “what else can we do?” r
 9. Maturity dashboards
 10. Production hardening
 
-`POST /api/enterprise-maturity` with `{ "action": "advance_all" }` creates connector profiles, connector health runs, governance policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, an enterprise maturity campaign, and an audit record from live tenant data.
+Click **Build all 10** or call `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` to create connector profiles, connector health runs, governance guardrail policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, a maturity campaign, and an audit record from live tenant data.
 
-## Architecture
+## Pilot Control Plane
 
-```mermaid
-flowchart LR
-  scanners["Scanners and enterprise tools"] --> ingest["Ingestion APIs and jobs"]
-  ingest --> normalize["Normalization and deduplication"]
-  normalize --> assets["Asset inventory and relationships"]
-  assets --> risk["Risk scoring"]
-  risk --> actions["Remediation actions"]
-  actions --> simulations["Simulation engine"]
-  simulations --> plans["Remediation plans"]
-  plans --> workflow["Approval workflow"]
-  workflow --> automation["Automation dry runs"]
-  automation --> evidence["Evidence and reports"]
-  evidence --> campaigns["Campaigns and governance"]
-```
+The `/pilot-control-plane` view moves the product from maturity tracking into pilot execution readiness for another ten concrete enterprise needs:
 
-## Tech Stack
+1. Real scanner connectors
+2. True simulation engine
+3. Remediation playbook library
+4. Policy-as-code
+5. Approval workbench
+6. Jira, GitHub, and ServiceNow execution
+7. Evidence vault
+8. AI remediation planner
+9. Executive dashboards
+10. Production SaaS layer
 
-- Next.js App Router
-- React
-- TypeScript
-- Prisma
-- SQLite for local development
-- Zod validation
-- Vitest
-- Lucide React icons
+Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` to configure scanner connector profiles, run dry-run connector checks, create policy-as-code controls, attach simulation and plan records, route approval workflows, generate evidence artifacts, create dry-run execution records, refresh dashboards, configure SSO/RBAC readiness, and write an audit event.
+
+## API Highlights
+
+- `GET /api/dashboard`
+- `POST /api/ingest/json`
+- `POST /api/ingest/csv`
+- `POST /api/mock-ingest`
+- `GET /api/assets`
+- `GET /api/findings`
+- `GET /api/remediation-actions`
+- `POST /api/remediation-actions/:id/simulate`
+- `POST /api/remediation-actions/:id/plan`
+- `POST /api/remediation-actions/:id/workflow`
+- `GET /api/pilot-readiness`
+- `POST /api/pilot-readiness`
+- `GET /api/pilot-control-plane`
+- `POST /api/pilot-control-plane`
+- `GET /api/enterprise-maturity`
+- `POST /api/enterprise-maturity`
+- `GET /api/operating-system`
+- `POST /api/operating-system`
+- `GET /api/policies`
+- `POST /api/policies`
+- `POST /api/governance/continuous-simulation`
+- `GET /api/governance/predictive-risk`
+- `POST /api/governance/apply-fix`
+
+See [docs/API.md](docs/API.md) for more detail.
 
 ## Quick Start
 
@@ -163,13 +118,9 @@ npm run db:push
 npm run dev
 ```
 
-Open:
+Open `http://localhost:3000`.
 
-```text
-http://localhost:3000
-```
-
-For local builds that need the database URL:
+For build verification:
 
 ```bash
 DATABASE_URL="file:./dev.db" npm run build
@@ -177,49 +128,29 @@ DATABASE_URL="file:./dev.db" npm run build
 
 ## Demo Flow
 
-1. Open the dashboard.
-2. Click **Load prototype data**.
-3. Review high-risk findings.
-4. Open the remediation queue.
-5. Run a simulation.
-6. Generate a plan.
-7. Open a workflow and review approvals.
-8. Visit `/connectors` to register a pilot connector profile.
-9. Visit `/ingestion-jobs` to run a scanner ingestion job.
-10. Visit `/campaign-board` to review campaign readiness.
-11. Visit `/operating-system` for closed-loop remediation coverage.
-12. Visit `/enterprise-maturity` and click **Build all 10** to create the advanced enterprise operating layer.
+1. Open `/` and load prototype data.
+2. Review findings, assets, and remediation actions.
+3. Run a simulation and generate a plan.
+4. Route a workflow and attach evidence.
+5. Open `/connectors`, `/ingestion-jobs`, and `/campaign-board`.
+6. Open `/enterprise-maturity` and click **Build all 10**.
+7. Open `/pilot-control-plane` and click **Activate all 10**.
+8. Open `/operating-system` and `/governance` to review closed-loop maturity.
 
-Prototype data can also be loaded with:
-
-```bash
-curl -X POST http://localhost:3000/api/mock-ingest
-```
-
-## Development Commands
+## Commands
 
 ```bash
 npm run dev
-npm run build
-npm run start
 npm run typecheck
 npm test
+DATABASE_URL="file:./dev.db" npm run build
 npm run db:generate
 npm run db:push
-npm run db:studio
-```
-
-## Testing
-
-```bash
-npm test
-npm run typecheck
-DATABASE_URL="file:./dev.db" npm run build
 ```
 
 ## Production Notes
 
-For production deployment, replace SQLite with a managed relational database, configure secret management for connector credentials, add background workers for long-running ingestion and simulation jobs, connect enterprise identity providers, and enforce environment-specific policy controls.
+For production, replace SQLite with a managed relational database, configure secret references for connector credentials, run ingestion and simulation in background workers, add OpenTelemetry traces, enforce environment-specific policy controls, and connect enterprise identity providers.
 
 ## Documentation
 
@@ -227,7 +158,3 @@ For production deployment, replace SQLite with a managed relational database, co
 - [API Reference](docs/API.md)
 - [Architecture Notes](docs/ARCHITECTURE.md)
 - [Runbook](docs/RUNBOOK.md)
-
-## License
-
-This repository does not currently declare an open-source license. Add a license before distributing or accepting external contributions.
