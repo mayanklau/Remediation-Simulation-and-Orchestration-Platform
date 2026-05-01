@@ -8,6 +8,44 @@ All APIs are tenant scoped. If `x-tenant-id` is omitted, the local default tenan
 - `GET /api/tenants`
 - `POST /api/tenants`
 - `GET /api/dashboard`
+- `GET /api/observability`
+- `POST /api/observability`
+- `POST /api/workers/run`
+- `GET /api/agentic`
+- `POST /api/agentic`
+- `GET /api/attack-paths`
+- `POST /api/attack-paths`
+
+## Agentic Orchestrator
+
+- `GET /api/agentic`
+- `POST /api/agentic`
+
+`GET /api/agentic` returns model-provider readiness, tenant context, safety rails, the governed tool registry, readiness scoring, and recent agent plans.
+
+`POST /api/agentic` accepts:
+
+```json
+{
+  "goal": "virtual_patch",
+  "prompt": "Plan safest next actions with model fallback.",
+  "provider": "openai_compatible",
+  "dryRun": true
+}
+```
+
+Supported `goal` values are `prioritize`, `plan`, `virtual_patch`, `evidence`, `executive_summary`, and `autonomous_governance`. Supported provider values are `deterministic`, `openai_compatible`, `anthropic_compatible`, `gemini_compatible`, and `local_slm`.
+
+The endpoint writes an `agentic_plan` report snapshot plus an audit log. Model output remains advisory; policy gates decide whether execution is eligible.
+
+## Auth and SSO
+
+- `GET /api/auth/session`
+- `POST /api/auth/session`
+- `GET /api/auth/sso/start`
+- `POST /api/auth/sso/callback`
+
+Session APIs issue signed local sessions for development and enterprise edge integration. SSO start exposes OIDC and SAML service-provider metadata. Production should front these contracts with the enterprise IdP and keep session signing in a managed secret.
 
 ## Ingestion
 
@@ -23,8 +61,25 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `POST /api/assets`
 - `GET /api/assets/:id`
 - `GET /api/asset-graph`
+- `GET /api/attack-paths`
+- `POST /api/attack-paths`
 - `GET /api/findings`
 - `GET /api/findings/:id`
+
+## Attack Path Analytics
+
+- `GET /api/attack-paths`
+- `POST /api/attack-paths`
+
+`GET /api/attack-paths` returns scanner-normalized vulnerability chains, bounded attack paths, path difficulty, before-remediation risk, after-remediation residual risk, recommended path breakers, and the research-backed construction method used for the tenant.
+
+`POST /api/attack-paths` accepts:
+
+```json
+{ "action": "snapshot" }
+```
+
+It stores the current attack-path analytics as an `attack_path_analytics` report snapshot and writes an audit log. The attack-path model is designed for Tenable, Qualys, Wiz, Snyk, GitHub Advanced Security, AWS Security Hub, Kubernetes, IAM, cloud posture, compliance, and custom CSV/API scanner inputs.
 
 ## Remediation
 
@@ -42,6 +97,9 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `GET /api/workflows/:id/evidence`
 - `POST /api/workflows/:id/evidence`
 - `GET /api/evidence/packs`
+- `POST /api/evidence/seal`
+
+`POST /api/evidence/seal` creates immutable audit-export artifacts with hash chaining, retention metadata, and the configured evidence storage URL.
 
 ## Connectors and Pilot Readiness
 
@@ -49,10 +107,13 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `POST /api/integrations`
 - `GET /api/connectors/run`
 - `POST /api/connectors/run`
+- `POST /api/connectors/live`
 - `GET /api/pilot-readiness`
 - `POST /api/pilot-readiness`
 - `GET /api/pilot-control-plane`
 - `POST /api/pilot-control-plane`
+- `GET /api/virtual-patching`
+- `POST /api/virtual-patching`
 - `GET /api/final-production`
 - `POST /api/final-production`
 
@@ -62,6 +123,23 @@ CSV headers include `source`, `source_id`, `title`, `description`, `severity`, `
 - `start_ingestion`
 
 Connector operations create durable run records for Jira, GitHub, ServiceNow, Tenable, Qualys, Wiz, Snyk, AWS Security Hub, Kubernetes, and related enterprise flows.
+
+`POST /api/connectors/live` accepts `{ "provider": "jira", "operation": "create_issue", "payload": {}, "dryRun": true }`. Dry-run mode records the endpoint, request shape, and secret-reference resolution without sending the external request. Live mode uses configured integration endpoints.
+
+## Virtual Patching And Path Breakers
+
+- `GET /api/virtual-patching`
+- `POST /api/virtual-patching`
+
+`GET /api/virtual-patching` returns virtual patch candidates, attack-path breaker candidates, active policies, execution hooks, recommended controls, enforcement points, and breaker scores.
+
+`POST /api/virtual-patching` accepts:
+
+```json
+{ "action": "activate" }
+```
+
+It creates enforced virtual-patching and path-breaker policies, dry-run execution hooks, canary simulations, remediation plans, path-breaker connector-run records, rollback requirements, and an audit event.
 
 ## Pilot Control Plane
 

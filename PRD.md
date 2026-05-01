@@ -41,8 +41,9 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Multi-tenant backend and tenant-scoped APIs
 - JSON and CSV finding ingestion
 - Asset inventory and asset graph
+- Vulnerability chaining and attack-path analytics
 - Deduplication and source correlation
-- Risk scoring and remediation action generation
+- Risk scoring, attack-path difficulty, before/after remediation risk, and remediation action generation
 - Simulation, planning, workflow, approvals, and evidence
 - Connector registry and durable connector runs
 - Pilot readiness, connector onboarding, and ingestion jobs
@@ -50,11 +51,14 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Automation hooks for CI/CD, Kubernetes, cloud, IAM, and policy fixes
 - Governance policies, risk exceptions, freeze windows, and auto-approval
 - Continuous simulation and predictive residual risk
+- Virtual patching and attack-path breaker control center
+- Agentic remediation orchestrator with any LLM, SLM, model gateway, or deterministic fallback
 - Remediation campaigns and campaign board
 - Closed-loop operating-system view
 - Enterprise maturity command center
 - Pilot control plane for production-pilot activation
 - Final production completion center
+- Production operations control room
 
 ## Enterprise Maturity Requirements
 
@@ -113,12 +117,77 @@ The final completion layer must close the last production readiness controls:
 
 `POST /api/final-production` with `{ "action": "finalize" }` must create the final policies, worker hooks, rollback coordinator, production report, readiness campaign, SSO/RBAC records, connector readiness checks, and audit event.
 
+## Virtual Patching And Path Breaker Requirements
+
+The product must support compensating controls before permanent remediation:
+
+| Capability | Requirement |
+| --- | --- |
+| Virtual patch candidate detection | Identify findings that are internet-exposed, lack patches, affect cloud/network/IAM/application surfaces, or require compensating controls. |
+| Control recommendation | Recommend WAF, API gateway, service mesh, EDR, admission controller, cloud policy, IAM, or network controls based on asset and finding context. |
+| Attack path breaker scoring | Score dependency paths from exposed sources to high-value targets using exposure, criticality, data sensitivity, hop count, and risk transfer. |
+| Breaker recommendation | Propose deny rules, microsegmentation, route quarantine, conditional IAM denies, or virtual patch controls. |
+| Simulation and planning | Run canary simulations and create remediation plans for top virtual patch candidates. |
+| Governed activation | Create enforced policies, dry-run execution hooks, connector-run records, rollback requirements, and audit logs before live enforcement. |
+
+`POST /api/virtual-patching` with `{ "action": "activate" }` must activate the policies, execution hooks, simulations, plans, path-breaker dry runs, and audit trail.
+
+## Vulnerability Chaining And Attack Path Requirements
+
+The product must turn scanner noise into end-to-end vulnerability analytics:
+
+| Capability | Requirement |
+| --- | --- |
+| Scanner normalization | Accept Tenable, Qualys, Wiz, Snyk, GitHub Advanced Security, AWS Security Hub, Kubernetes, IAM, cloud posture, compliance, CSV, and API scanner inputs through the canonical finding model. |
+| Attack graph construction | Build logical attack paths from asset dependencies, exposure, exploit preconditions, identity/control relationships, high-value targets, and vulnerability metadata. |
+| Bounded path enumeration | Enumerate bounded simple paths from exposed or initial-access assets to crown-jewel, production, critical, or sensitive targets. |
+| Vulnerability chaining | Convert each path into ordered chain steps with source scanner, category, severity, exploit status, patchability, business risk, and mapped attack technique. |
+| Difficulty scoring | Label every path as `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH` using hop count, exposure, exploit availability, active exploitation, patchability, and control friction. |
+| Before/after risk | Show customer-facing risk before remediation, estimated residual risk after remediation, and the risk delta expected from patching, virtual patching, path breakers, and policy controls. |
+| Breaker recommendation | Recommend microsegmentation, WAF/API gateway controls, service mesh policy, conditional IAM deny, route quarantine, and database access restrictions. |
+| Evidence snapshot | Persist attack-path analytics as report snapshots and audit records for governance and executive reporting. |
+
+`GET /api/attack-paths` must return the current attack-path model. `POST /api/attack-paths` with `{ "action": "snapshot" }` must save the analytics as evidence-ready reporting data.
+
+## Agentic Orchestrator Requirements
+
+The product must support governed agentic planning across any model provider while preserving deterministic safety controls:
+
+| Capability | Requirement |
+| --- | --- |
+| Model abstraction | Support deterministic fallback, OpenAI-compatible gateways, Anthropic-compatible endpoints, Gemini-compatible endpoints, and local SLM endpoints. |
+| Tenant context builder | Build prompts from tenant-scoped findings, assets, remediation actions, simulations, workflows, policies, evidence, reports, automation runs, virtual patch candidates, and path-breaker candidates. |
+| Tool registry | Expose governed tools for ingestion, simulation, plan generation, virtual patching, attack-path breaking, approval routing, connector execution, and evidence sealing. |
+| Safety rails | Keep execution dry-run by default, require approval and rollback for production, require virtual patch/path-breaker assessment for exposed crown-jewel paths, and prohibit raw secrets in prompts. |
+| Persistence | Store every agent run as an `agentic_plan` report snapshot and audit the provider, model, dry-run state, and tool plan. |
+| Provider fallback | If the requested model is unavailable or fails, fall back to deterministic rules-engine planning without blocking the workflow. |
+
+`POST /api/agentic` must accept `goal`, `prompt`, `provider`, and `dryRun`, then return the model completion, guarded tool plan, and refreshed agentic model.
+
+## Production Operations Requirements
+
+The product must provide the final operational controls required to run a serious enterprise pilot:
+
+| Area | Requirement |
+| --- | --- |
+| Auth and session contracts | Issue signed sessions, expose SSO start metadata, and accept IdP callback payloads behind enterprise gateway controls. |
+| Secret manager integration | Resolve secret references through environment, Vault, AWS Secrets Manager, Azure Key Vault, or equivalent providers without persisting raw secrets. |
+| Live connectors | Provide live Jira, GitHub, and ServiceNow client contracts with dry-run default, endpoint rendering, request shaping, and durable run records. |
+| Worker process | Process ingestion, simulation, evidence, connector sync, and automation lanes through a worker endpoint that can move to a queue runtime. |
+| Migrations | Include a baseline Prisma migration and CI migration validation. |
+| Evidence storage | Seal evidence packs with hash chaining, retention metadata, immutable export markers, and external storage URLs. |
+| Test depth | Cover security/session helpers and keep CI running typecheck, tests, and builds. |
+| Deployment pipeline | Provide GitHub Actions for install, Prisma generation, typecheck, tests, and production build. |
+| Observability | Emit operational signals, track connector and automation failures, expose telemetry, and flag OTEL/alert readiness. |
+| Security hardening | Apply security headers, rate limits, CSRF hooks, signed sessions, RBAC permissions, tenant scoping, and audit records. |
+
 ## Primary Routes
 
 - `/`
 - `/findings`
 - `/assets`
 - `/asset-graph`
+- `/attack-paths`
 - `/remediation`
 - `/simulations`
 - `/workflows`
@@ -128,7 +197,10 @@ The final completion layer must close the last production readiness controls:
 - `/campaign-board`
 - `/operating-system`
 - `/pilot-control-plane`
+- `/virtual-patching`
+- `/agentic`
 - `/final-production`
+- `/production-ops`
 - `/enterprise-maturity`
 - `/governance`
 - `/enterprise`
@@ -148,6 +220,9 @@ The final completion layer must close the last production readiness controls:
 - Enterprise maturity score
 - Pilot readiness score
 - Final production completion score
+- Agentic readiness score
+- Critical attack-path reduction
+- Average before/after path-risk delta
 
 ## Non-Goals
 

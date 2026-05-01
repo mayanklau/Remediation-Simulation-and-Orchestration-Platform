@@ -1,57 +1,121 @@
 # Remediation Twin
 
-Remediation Twin is an enterprise remediation operating system for turning chaotic security findings into prioritized, simulated, approved, campaign-managed, and auditable remediation work.
+Remediation Twin is an enterprise remediation simulation and orchestration platform. It turns security findings from scanners, cloud tools, code security, IAM systems, and compliance sources into prioritized remediation work that can be simulated, approved, executed in dry-run, tracked through campaigns, and sealed with audit-grade evidence.
 
-It ingests vulnerability, cloud, identity, infrastructure, application, and compliance findings; maps them to assets and ownership; scores business risk; simulates remediation impact before execution; generates rollout and rollback plans; routes approvals; tracks campaigns; and exports evidence.
+The product is designed for enterprises that are overwhelmed by remediation volume and need a governed way to answer:
 
-## Implemented Product
+- Which findings actually matter to the business?
+- Which assets and services are affected?
+- What will break if we remediate?
+- Can we virtually patch or break the attack path first?
+- Who must approve the change?
+- What evidence proves the remediation was safe and complete?
+
+## What It Does
+
+Remediation Twin provides a full remediation operating loop:
+
+1. Ingest findings through JSON, CSV, mock ingestion, and connector-run contracts.
+2. Normalize, deduplicate, and correlate source findings.
+3. Map findings to assets, owners, environments, exposure, and dependencies.
+4. Construct vulnerability chains and attack paths across asset, identity, cloud, network, and application relationships.
+5. Score technical risk, business risk, path difficulty, and before/after remediation risk.
+6. Generate remediation actions.
+7. Simulate remediation before execution.
+8. Build rollout, rollback, validation, and evidence plans.
+9. Route approval workflows.
+10. Apply policy guardrails, exceptions, freeze windows, and auto-approval checks.
+11. Use virtual patching and path breakers when permanent remediation is risky or delayed.
+12. Track campaigns, evidence, audit logs, operational telemetry, and production readiness.
+
+## Major Capabilities
 
 - Multi-tenant Next.js and Prisma application
+- Tenant-scoped APIs and persistence
 - JSON, CSV, and prototype finding ingestion
 - Asset inventory and dependency graph
-- Finding deduplication and source correlation
-- Risk and business-risk scoring
+- Vulnerability chaining and attack-path analytics for scanner-normalized inputs
+- Risk scoring and business-risk prioritization
+- Customer-facing before and after remediation risk scoring
 - Remediation action generation
-- Simulation engine for patch, network, IAM, cloud, and compliance actions
+- Simulation engine for patch, network, IAM, cloud, and compliance remediation
 - Rollout, rollback, validation, and evidence plan generation
-- Approval workflow, comments, decisions, and evidence capture
-- Jira, GitHub, ServiceNow, scanner, cloud, and Kubernetes connector run framework
-- Connector onboarding and ingestion job readiness
-- SSO metadata, RBAC evaluation, audit timeline, and reporting
-- CI/CD, Kubernetes, cloud, IAM, and policy-fix dry-run automation hooks
-- Risk exceptions, freeze windows, auto-approval policies, and evidence gates
-- Continuous simulation, predictive residual risk, and policy-governed fixes
-- Self-updating remediation campaigns and campaign board
-- Enterprise maturity command center for the ten advanced capability tracks
-- Pilot control plane for the next ten production-pilot capabilities
-- Final production completion center with deploy, security, worker, evidence, observability, and hardening controls
+- Approval workflow with comments, decisions, and evidence
+- Jira, GitHub, ServiceNow, scanner, cloud, Kubernetes, and IAM connector framework
+- Virtual patching and attack-path breaker control center
+- Agentic remediation orchestrator for any LLM, SLM, model gateway, or deterministic fallback
+- Governance policies, risk exceptions, freeze windows, evidence gates, and auto-approval
+- Continuous simulation and predictive residual risk
+- Campaign board and self-updating remediation campaigns
+- SSO metadata, signed sessions, RBAC, and audit trail
+- Worker runner for ingestion, simulation, evidence, connector sync, and automation
+- Evidence sealing with hash chaining and retention metadata
+- Observability, health checks, run records, and production telemetry
+- CI workflow, Docker Compose, production environment contract, and baseline Prisma migration
 
-## Main Routes
+## Key Modules
 
-| Route | Purpose |
+| Module | Purpose |
 | --- | --- |
-| `/` | Executive dashboard |
-| `/findings` | Finding backlog |
-| `/assets` | Asset inventory |
-| `/asset-graph` | Asset dependency and risk-transfer map |
-| `/remediation` | Remediation queue |
-| `/simulations` | Simulation history |
-| `/workflows` | Approval workflow |
-| `/evidence` | Evidence readiness |
-| `/connectors` | Connector onboarding |
-| `/ingestion-jobs` | Durable ingestion operations |
-| `/campaign-board` | Campaign operating board |
-| `/operating-system` | Closed-loop remediation control plane |
-| `/pilot-control-plane` | Production-pilot activation for the next ten capabilities |
-| `/final-production` | Final production readiness and deployment closure |
-| `/enterprise-maturity` | Ten-track maturity command center |
-| `/governance` | Autonomous remediation governance |
-| `/enterprise` | SSO, RBAC, and enterprise readiness |
-| `/audit` | Audit timeline |
+| Dashboard | Executive overview of risk, findings, actions, evidence, and readiness. |
+| Findings | Canonical finding backlog after normalization and deduplication. |
+| Assets | Inventory of systems, owners, exposure, criticality, and sensitivity. |
+| Asset Graph | Dependency graph with risk transfer, blast radius, and concentration analysis. |
+| Attack Path Analytics | Scanner-agnostic vulnerability chains, path difficulty, and before/after remediation risk. |
+| Remediation Queue | Generated remediation actions that can be simulated, planned, approved, and verified. |
+| Simulations | Historical simulation runs with confidence, risk reduction, and operational risk. |
+| Workflows | Approval and execution workflow tracking. |
+| Evidence | Evidence readiness and evidence pack exports. |
+| Connectors | Enterprise connector onboarding and dry-run execution. |
+| Ingestion Jobs | Durable ingestion operation tracking. |
+| Campaign Board | Campaign-level ownership, progress, blockers, and risk. |
+| Governance | Policies, exceptions, continuous simulation, predictive risk, and governed fixes. |
+| Virtual Patching | Compensating controls and attack-path breaker workflow. |
+| Agentic Orchestrator | Model-agnostic planning layer with tool registry, safety rails, dry-run execution, and audit persistence. |
+| Enterprise Maturity | Ten-track maturity command center. |
+| Pilot Control Plane | Production-pilot activation for real enterprise readiness. |
+| Final Production | Final deployability and production closure controls. |
+| Production Ops | Runtime workers, SSO/session contracts, telemetry, evidence sealing, and live connector dry-runs. |
 
-## Enterprise Maturity Tracks
+## Attack Path Analytics
 
-The `/enterprise-maturity` command center operationalizes all ten advanced roadmap areas:
+The `/attack-paths` module turns raw scanner findings into end-to-end vulnerability analytics. It is designed around established attack-graph research: logical attack graphs, topological vulnerability analysis, bounded simple-path enumeration, exploit-dependency reasoning, and Bayesian-style risk reduction after controls are applied.
+
+What it does:
+
+- normalizes findings from vulnerability scanners, cloud posture tools, code scanners, IAM analyzers, Kubernetes controls, compliance scanners, and ticket sources into a common chain model
+- combines asset dependency edges, internet exposure, criticality, sensitivity, finding category, exploit availability, active exploitation, patch availability, and policy controls
+- constructs bounded attack paths from exposed or initial-access assets to crown-jewel and production targets
+- labels each path with difficulty: `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH`
+- calculates before-remediation path risk, after-remediation residual risk, risk delta, likelihood, and business impact
+- recommends path breakers such as WAF/API gateway virtual patches, microsegmentation, conditional IAM denies, route quarantine, and database access restriction
+- snapshots attack-path analytics as evidence-ready report records
+
+The construction method is intentionally scanner-agnostic. Tenable, Qualys, Wiz, Snyk, GitHub Advanced Security, AWS Security Hub, Kubernetes, IAM, cloud configuration, and custom CSV/API feeds can all produce chain steps as long as they provide asset, category, severity, exploitability, and remediation signals.
+
+## Virtual Patching And Path Breakers
+
+The `/virtual-patching` module adds protection before permanent remediation is safe:
+
+- detects virtual patch candidates when a finding is internet-exposed, lacks a patch, or affects cloud, IAM, network, application, or container surfaces
+- recommends WAF, API gateway, service mesh, EDR, admission controller, IAM, cloud-policy, and network controls
+- scores attack paths from exposed assets to high-value targets
+- proposes path breakers such as deny rules, microsegmentation, conditional IAM denies, route quarantine, and virtual patch controls
+- runs canary simulations for top candidates
+- generates remediation plans for virtual patch actions
+- creates enforced policies, execution hooks, dry-run path-breaker records, rollback requirements, and audit logs
+
+Activation:
+
+```bash
+curl -X POST http://localhost:3000/api/virtual-patching \
+  -H "content-type: application/json" \
+  -d '{"action":"activate"}'
+```
+
+## Enterprise Maturity
+
+The `/enterprise-maturity` command center operationalizes ten advanced capability tracks:
 
 1. Real connector framework
 2. Simulation sandbox
@@ -64,11 +128,11 @@ The `/enterprise-maturity` command center operationalizes all ten advanced roadm
 9. Maturity dashboards
 10. Production hardening
 
-Click **Build all 10** or call `POST /api/enterprise-maturity` with `{ "action": "advance_all" }` to create connector profiles, connector health runs, governance guardrail policies, dry-run execution hooks, OIDC readiness, RBAC bindings, an executive report, a maturity campaign, and an audit record from live tenant data.
+`POST /api/enterprise-maturity` with `{ "action": "advance_all" }` creates connector profiles, connector health runs, governance policies, dry-run execution hooks, OIDC readiness, RBAC bindings, executive reports, maturity campaigns, and audit records.
 
 ## Pilot Control Plane
 
-The `/pilot-control-plane` view moves the product from maturity tracking into pilot execution readiness for another ten concrete enterprise needs:
+The `/pilot-control-plane` module moves the platform into enterprise pilot readiness:
 
 1. Real scanner connectors
 2. True simulation engine
@@ -81,11 +145,11 @@ The `/pilot-control-plane` view moves the product from maturity tracking into pi
 9. Executive dashboards
 10. Production SaaS layer
 
-Click **Activate all 10** or call `POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` to configure scanner connector profiles, run dry-run connector checks, create policy-as-code controls, attach simulation and plan records, route approval workflows, generate evidence artifacts, create dry-run execution records, refresh dashboards, configure SSO/RBAC readiness, and write an audit event.
+`POST /api/pilot-control-plane` with `{ "action": "activate_all_10" }` configures scanner connector profiles, dry-run connector checks, policy-as-code controls, simulation and plan records, approval workflows, evidence artifacts, execution records, dashboards, SSO/RBAC readiness, and an audit event.
 
-## Final Production Closure
+## Final Production Readiness
 
-The `/final-production` center closes the final ten production requirements:
+The `/final-production` center closes the final production requirements:
 
 1. Database and migrations
 2. Auth, SSO, and RBAC
@@ -98,7 +162,103 @@ The `/final-production` center closes the final ten production requirements:
 9. Enterprise deployment
 10. Security hardening
 
-Click **Finalize readiness** or call `POST /api/final-production` with `{ "action": "finalize" }` to create final production guardrail policies, worker execution lanes, rollback coordination, connector readiness checks, production campaign/report records, SSO/RBAC readiness, and an audit event.
+`POST /api/final-production` with `{ "action": "finalize" }` creates production guardrail policies, worker execution lanes, rollback coordination, connector readiness checks, production campaign/report records, SSO/RBAC readiness, and an audit event.
+
+## Production Operations
+
+The `/production-ops` control room includes:
+
+- signed session contract
+- SSO start and callback contracts
+- rate-limit and CSRF middleware hooks
+- secret-reference resolution
+- live connector dry-run runner
+- worker runner for ingestion, simulation, evidence, connector sync, and automation
+- immutable evidence sealing with hash chaining
+- OpenTelemetry and alert-route readiness signals
+- baseline Prisma migration
+- GitHub Actions CI workflow
+
+## Agentic Orchestrator
+
+The `/agentic` module makes Remediation Twin model-agnostic and agentic without making it reckless. It can use enterprise LLM gateways, OpenAI-compatible APIs, Anthropic-compatible endpoints, Gemini-compatible endpoints, local SLMs, or the built-in deterministic rules engine.
+
+Core behavior:
+
+- selects the preferred configured model provider, then falls back to deterministic planning if the model is unavailable
+- never sends raw secrets to the model prompt
+- builds prompts from tenant-scoped findings, assets, simulations, workflows, evidence, policies, automation runs, and virtual patching context
+- exposes a governed tool registry for simulation, plan generation, virtual patching, path breaking, approvals, connectors, and evidence sealing
+- keeps live execution dry-run by default until credentials, approvals, policy gates, and rollback evidence are present
+- stores every agent plan as a report snapshot and writes an audit log entry
+
+Supported providers:
+
+| Provider | Environment |
+| --- | --- |
+| Deterministic fallback | Always enabled |
+| OpenAI-compatible or model gateway | `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` |
+| Anthropic-compatible | `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` |
+| Gemini-compatible | `GEMINI_API_KEY`, `GEMINI_BASE_URL`, `GEMINI_MODEL` |
+| Local SLM | `LOCAL_SLM_URL`, `LOCAL_SLM_MODEL` |
+
+Activation:
+
+```bash
+curl -X POST http://localhost:3000/api/agentic \
+  -H "content-type: application/json" \
+  -d '{"goal":"virtual_patch","prompt":"Plan safest next actions with virtual patching and path breakers.","dryRun":true}'
+```
+
+## Production-Ready Architecture
+
+The app is production-ready from an application architecture standpoint because it includes:
+
+- multi-tenant data model
+- tenant-scoped APIs
+- Prisma persistence
+- baseline migration under `prisma/migrations`
+- RBAC role catalog and evaluation
+- SSO/session contracts
+- signed sessions and CSRF token helpers
+- security headers and request throttling
+- secret-reference pattern instead of raw secret persistence
+- durable run records for connectors and automation
+- worker lane contracts
+- evidence packs and evidence sealing
+- audit logs for governance and production activation
+- health checks and observability telemetry
+- Docker and production Compose configuration
+- CI workflow for install, Prisma generation, typecheck, tests, and build
+
+Live production execution remains intentionally governed and dry-run by default until enterprise credentials, identity provider metadata, approval policies, change windows, and storage targets are configured.
+
+## Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Executive dashboard |
+| `/findings` | Finding backlog |
+| `/assets` | Asset inventory |
+| `/asset-graph` | Dependency, blast-radius, and risk-transfer map |
+| `/attack-paths` | Vulnerability chaining, path difficulty, and before/after remediation risk |
+| `/remediation` | Remediation queue |
+| `/simulations` | Simulation history |
+| `/workflows` | Approval workflow |
+| `/evidence` | Evidence readiness |
+| `/connectors` | Connector onboarding |
+| `/ingestion-jobs` | Durable ingestion operations |
+| `/campaign-board` | Campaign operating board |
+| `/operating-system` | Closed-loop remediation control plane |
+| `/pilot-control-plane` | Enterprise pilot activation |
+| `/virtual-patching` | Virtual patching and attack-path breaker controls |
+| `/agentic` | Model-agnostic agentic remediation orchestrator |
+| `/final-production` | Production readiness closure |
+| `/production-ops` | Runtime operations |
+| `/enterprise-maturity` | Maturity command center |
+| `/governance` | Autonomous remediation governance |
+| `/enterprise` | SSO, RBAC, and enterprise readiness |
+| `/audit` | Audit timeline |
 
 ## API Highlights
 
@@ -107,6 +267,9 @@ Click **Finalize readiness** or call `POST /api/final-production` with `{ "actio
 - `POST /api/ingest/csv`
 - `POST /api/mock-ingest`
 - `GET /api/assets`
+- `GET /api/asset-graph`
+- `GET /api/attack-paths`
+- `POST /api/attack-paths`
 - `GET /api/findings`
 - `GET /api/remediation-actions`
 - `POST /api/remediation-actions/:id/simulate`
@@ -116,8 +279,21 @@ Click **Finalize readiness** or call `POST /api/final-production` with `{ "actio
 - `POST /api/pilot-readiness`
 - `GET /api/pilot-control-plane`
 - `POST /api/pilot-control-plane`
+- `GET /api/virtual-patching`
+- `POST /api/virtual-patching`
+- `GET /api/agentic`
+- `POST /api/agentic`
 - `GET /api/final-production`
 - `POST /api/final-production`
+- `GET /api/auth/session`
+- `POST /api/auth/session`
+- `GET /api/auth/sso/start`
+- `POST /api/auth/sso/callback`
+- `POST /api/connectors/live`
+- `POST /api/workers/run`
+- `POST /api/evidence/seal`
+- `GET /api/observability`
+- `POST /api/observability`
 - `GET /api/enterprise-maturity`
 - `POST /api/enterprise-maturity`
 - `GET /api/operating-system`
@@ -128,7 +304,7 @@ Click **Finalize readiness** or call `POST /api/final-production` with `{ "actio
 - `GET /api/governance/predictive-risk`
 - `POST /api/governance/apply-fix`
 
-See [docs/API.md](docs/API.md) for more detail.
+See [docs/API.md](docs/API.md) for the full API reference.
 
 ## Quick Start
 
@@ -141,23 +317,21 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-For build verification:
-
-```bash
-DATABASE_URL="file:./dev.db" npm run build
-```
-
 ## Demo Flow
 
 1. Open `/` and load prototype data.
 2. Review findings, assets, and remediation actions.
-3. Run a simulation and generate a plan.
+3. Run a simulation and generate a remediation plan.
 4. Route a workflow and attach evidence.
-5. Open `/connectors`, `/ingestion-jobs`, and `/campaign-board`.
-6. Open `/enterprise-maturity` and click **Build all 10**.
-7. Open `/pilot-control-plane` and click **Activate all 10**.
-8. Open `/final-production` and click **Finalize readiness**.
-9. Open `/operating-system` and `/governance` to review closed-loop maturity.
+5. Open `/asset-graph` to inspect blast radius and risk transfer.
+6. Open `/attack-paths` to review vulnerability chains, difficulty, and before/after remediation risk.
+7. Open `/enterprise-maturity` and click **Build all 10**.
+8. Open `/pilot-control-plane` and click **Activate all 10**.
+9. Open `/virtual-patching` and click **Activate controls**.
+10. Open `/agentic` and click **Run agent plan**.
+11. Open `/final-production` and click **Finalize readiness**.
+12. Open `/production-ops` to run workers, seal evidence, and inspect telemetry.
+13. Open `/operating-system` and `/governance` to review closed-loop maturity.
 
 ## Commands
 
@@ -171,9 +345,49 @@ npm run db:push
 npm run db:deploy
 ```
 
-## Production Notes
+## Environment
 
-For production, replace SQLite with a managed relational database, configure secret references for connector credentials, run ingestion and simulation in background workers, add OpenTelemetry traces, enforce environment-specific policy controls, and connect enterprise identity providers.
+Required or recommended variables are documented in `.env.example`:
+
+- `DATABASE_URL`
+- `APP_URL`
+- `SESSION_SECRET`
+- `SECRET_PROVIDER`
+- `WORKER_CONCURRENCY`
+- `EVIDENCE_STORAGE_URL`
+- `OTEL_EXPORTER_OTLP_ENDPOINT`
+- `ALERT_WEBHOOK_URL`
+- `JIRA_BASE_URL`
+- `GITHUB_APP_ID`
+- `SERVICENOW_INSTANCE_URL`
+- `OIDC_ISSUER`
+- `OIDC_CLIENT_ID`
+- `RATE_LIMIT_PER_MINUTE`
+- `LLM_BASE_URL`
+- `LLM_API_KEY`
+- `LLM_MODEL`
+- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_MODEL`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `LOCAL_SLM_URL`
+- `LOCAL_SLM_MODEL`
+
+## Deployment
+
+For production, use a managed relational database, external secret manager, object storage for evidence, worker runtime, enterprise identity provider, telemetry collector, and alert routing.
+
+Container deployment:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+Migration deployment:
+
+```bash
+npm run db:deploy
+```
 
 ## Documentation
 

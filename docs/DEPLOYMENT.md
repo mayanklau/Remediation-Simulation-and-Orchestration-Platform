@@ -30,6 +30,9 @@ Optional but recommended:
 - `JIRA_BASE_URL`
 - `GITHUB_APP_ID`
 - `SERVICENOW_INSTANCE_URL`
+- `OIDC_ISSUER`
+- `OIDC_CLIENT_ID`
+- `RATE_LIMIT_PER_MINUTE`
 
 ## Build
 
@@ -52,6 +55,24 @@ For container deployment:
 ```bash
 docker compose -f docker-compose.prod.yml up --build
 ```
+
+The repository includes a baseline Prisma migration under `prisma/migrations/0001_initial`. Production deployments should run `npm run db:deploy` before starting web and worker runtime.
+
+## Workers
+
+`POST /api/workers/run` can execute one lane at a time:
+
+- `ingestion`
+- `simulation`
+- `evidence`
+- `connector_sync`
+- `automation`
+
+In a larger deployment, route the same lane contract through BullMQ, SQS, Temporal, Cloud Tasks, or another managed queue.
+
+## CI
+
+GitHub Actions runs `npm ci`, Prisma generation, typecheck, tests, and build on pushes and pull requests.
 
 ## Final Readiness
 

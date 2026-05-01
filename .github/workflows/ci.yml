@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./ci.db
+      APP_URL: http://localhost:3000
+      SESSION_SECRET: ci-session-secret
+      SECRET_PROVIDER: env
+      WORKER_CONCURRENCY: "4"
+      EVIDENCE_STORAGE_URL: file://./evidence
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
