@@ -12,7 +12,10 @@ export type VulnerabilityChainStep = {
   source: string;
   category: string;
   severity: string;
+  domain: string;
   technique: string;
+  normalizedScanner: string;
+  exploitPreconditions: string[];
   businessRisk: number;
   exploitAvailable: boolean;
   activeExploitation: boolean;
@@ -35,6 +38,16 @@ export type AttackPath = {
   riskDelta: number;
   likelihood: number;
   businessImpact: number;
+  shortestHopCount: number;
+  kHopBlastRadius: number;
+  centralityScore: number;
+  chokePoints: string[];
+  crownJewelExposure: string;
+  difficultyExplanation: string[];
+  controlSimulations: Array<{ control: string; beforeRisk: number; afterRisk: number; riskReduction: number; assumptions: string[] }>;
+  pathBreakerRecommendations: Array<{ edge: string; control: string; estimatedRiskReduction: number; why: string }>;
+  remediationPlaybook: { playbookId: string; title: string; owner: string; changeRisk: string; steps: string[] };
+  evidencePack: { beforeState: string[]; simulationResult: string[]; approval: string[]; executionLog: string[]; validation: string[]; residualRisk: string[] };
   recommendedBreakers: string[];
   evidenceRequirements: string[];
   validationPlan: string[];
@@ -115,23 +128,36 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       const reduction = estimateReduction(candidate.chain, simulations, policies.length);
       const after = clamp(before - reduction, 0, 100);
       const difficultyScore = scoreDifficulty(candidate.chain, candidate.path.length, candidate.start.internetExposure);
+      const difficulty = difficultyBand(difficultyScore);
+      const hops = candidate.path.map((assetId) => graph.nodes.find((node) => node.id === assetId)?.name ?? assetId);
+      const basicBreakers = recommendBreakers(candidate.chain, candidate.start.internetExposure, candidate.target.type);
       return {
         id: `attack-path-${index + 1}`,
         name: `${candidate.start.name} to ${candidate.target.name}`,
         entryAsset: candidate.start.name,
         targetAsset: candidate.target.name,
-        hops: candidate.path.map((assetId) => graph.nodes.find((node) => node.id === assetId)?.name ?? assetId),
+        hops,
         chain: candidate.chain,
         scannerInputs: [...new Set(candidate.chain.map((step) => step.source))],
         constructionMethod: "Scanner-normalized logical attack graph with bounded path enumeration, asset dependency edges, vulnerability preconditions, exploitability signals, and Bayesian-style before/after risk scoring.",
-        difficulty: difficultyBand(difficultyScore),
+        difficulty,
         difficultyScore,
         beforeRemediationRisk: before,
         afterRemediationRisk: after,
         riskDelta: before - after,
         likelihood: clamp(100 - difficultyScore + candidate.chain.filter((step) => step.activeExploitation || step.exploitAvailable).length * 8, 1, 100),
         businessImpact: clamp(candidate.target.criticality * 12 + candidate.target.dataSensitivity * 10 + before * 0.35, 1, 100),
-        recommendedBreakers: recommendBreakers(candidate.chain, candidate.start.internetExposure, candidate.target.type),
+        shortestHopCount: candidate.path.length - 1,
+        kHopBlastRadius: estimateKHopBlastRadius(candidate.path[0], adjacency, 3),
+        centralityScore: 0,
+        chokePoints: hops.slice(1, -1),
+        crownJewelExposure: crownJewelExposure(candidate.target),
+        difficultyExplanation: difficultyExplanation(difficultyScore, candidate.chain, candidate.path.length, candidate.start.internetExposure),
+        controlSimulations: simulateControls(candidate.chain, before),
+        pathBreakerRecommendations: recommendPathBreakers(hops, candidate.chain, before, after, basicBreakers),
+        remediationPlaybook: remediationPlaybook(candidate.chain, candidate.target.type, candidate.target.environment, before),
+        evidencePack: evidencePack(candidate.chain, before, after),
+        recommendedBreakers: basicBreakers,
         evidenceRequirements: evidenceRequirements(candidate.chain),
         validationPlan: validationPlan(candidate.chain, candidate.target.name),
         customerNarrative: customerNarrative(candidate.start.name, candidate.target.name, before, after),
@@ -140,7 +166,16 @@ export async function buildAttackPathAnalytics(tenantId: string) {
     })
     .sort((left, right) => right.beforeRemediationRisk - left.beforeRemediationRisk)
     .slice(0, 25);
+  const centrality = computeCentrality(paths);
+  for (const path of paths) {
+    path.centralityScore = average(path.hops.map((hop) => centrality.find((item) => item.asset === hop)?.score ?? 0));
+    path.chokePoints = path.hops
+      .slice(1, -1)
+      .filter((hop) => (centrality.find((item) => item.asset === hop)?.score ?? 0) >= 50)
+      .slice(0, 3);
+  }
   const graphModel = buildAttackGraph(paths);
+  const executiveViews = buildExecutiveViews(paths);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -162,6 +197,20 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       vulnerabilityChains: graphModel.vulnerabilityChains.length
     },
     scannerCoverage: buildScannerCoverage(findings),
+    scannerNormalizationAdapters: scannerNormalizationAdapters(),
+    vulnerabilityChainingRules: vulnerabilityChainingRules(),
+    graphAlgorithms: {
+      shortestExploitablePaths: paths
+        .slice()
+        .sort((left, right) => left.shortestHopCount - right.shortestHopCount || right.beforeRemediationRisk - left.beforeRemediationRisk)
+        .slice(0, 10)
+        .map((path) => ({ pathId: path.id, name: path.name, hops: path.shortestHopCount, risk: path.beforeRemediationRisk, difficulty: path.difficulty })),
+      kHopBlastRadius: paths.slice(0, 10).map((path) => ({ entryAsset: path.entryAsset, hops: 3, impactedAssets: path.kHopBlastRadius, topTarget: path.targetAsset })),
+      centrality,
+      chokePoints: centrality.filter((item) => item.kind === "choke_point").slice(0, 10),
+      crownJewelExposure: paths.filter((path) => path.crownJewelExposure !== "low").slice(0, 10).map((path) => ({ target: path.targetAsset, exposure: path.crownJewelExposure, beforeRisk: path.beforeRemediationRisk, afterRisk: path.afterRemediationRisk }))
+    },
+    executiveViews,
     decisionReadiness: buildDecisionReadiness(paths),
     subjectMaturity: buildSubjectMaturity(paths, graphModel, findings.length),
     developmentMaturity: buildDevelopmentMaturity(paths, policies.length, simulations.length),
@@ -295,7 +344,10 @@ function toChainStep(finding: { id: string; assetId: string | null; asset: { nam
     source: finding.source,
     category: finding.category,
     severity: finding.severity,
+    domain: domainFromCategory(finding.category, finding.source),
     technique: mapTechnique(finding.category, metadata),
+    normalizedScanner: scannerAdapterFor(finding.source),
+    exploitPreconditions: exploitPreconditions(finding.category, metadata),
     businessRisk: Math.round(finding.businessRiskScore),
     exploitAvailable: finding.exploitAvailable,
     activeExploitation: finding.activeExploitation,
@@ -305,12 +357,62 @@ function toChainStep(finding: { id: string; assetId: string | null; asset: { nam
 
 function mapTechnique(category: string, metadata: Record<string, unknown>) {
   if (typeof metadata.attackTechnique === "string") return metadata.attackTechnique;
-  if (category.includes("iam")) return "Valid Accounts / Permission Groups Discovery";
-  if (category.includes("network")) return "External Remote Services / Network Service Discovery";
-  if (category.includes("cloud")) return "Cloud Service Dashboard / Account Discovery";
-  if (category.includes("container") || category.includes("kubernetes")) return "Container and Resource Discovery";
-  if (category.includes("application")) return "Exploit Public-Facing Application";
+  const domain = domainFromCategory(category, "");
+  if (domain === "iam") return "Valid Accounts / Permission Groups Discovery";
+  if (domain === "network") return "External Remote Services / Network Service Discovery";
+  if (domain === "cloud") return "Cloud Service Dashboard / Account Discovery";
+  if (domain === "kubernetes") return "Container and Resource Discovery";
+  if (domain === "application") return "Exploit Public-Facing Application";
+  if (domain === "cicd") return "CI/CD Pipeline Modification";
+  if (domain === "secrets") return "Unsecured Credentials";
+  if (domain === "data_store") return "Data from Information Repositories";
   return "Exploit Vulnerability";
+}
+
+function domainFromCategory(category: string, source: string) {
+  const value = `${category} ${source}`.toLowerCase();
+  if (value.includes("iam") || value.includes("identity") || value.includes("permission")) return "iam";
+  if (value.includes("kubernetes") || value.includes("container") || value.includes("k8s")) return "kubernetes";
+  if (value.includes("cloud") || value.includes("aws") || value.includes("azure") || value.includes("gcp") || value.includes("wiz") || value.includes("prisma")) return "cloud";
+  if (value.includes("ci") || value.includes("cd") || value.includes("pipeline") || value.includes("github")) return "cicd";
+  if (value.includes("secret") || value.includes("credential") || value.includes("token")) return "secrets";
+  if (value.includes("database") || value.includes("data") || value.includes("s3") || value.includes("bucket")) return "data_store";
+  if (value.includes("application") || value.includes("snyk") || value.includes("code")) return "application";
+  if (value.includes("network") || value.includes("firewall") || value.includes("subnet") || value.includes("tenable") || value.includes("qualys")) return "network";
+  return "vulnerability";
+}
+
+function scannerAdapterFor(source: string) {
+  const normalized = source.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const adapters: Record<string, string> = {
+    tenable: "Tenable VM adapter: plugin/CVE/CVSS/exploit flags mapped to canonical vulnerability findings",
+    qualys: "Qualys VMDR adapter: QID/CVE/asset tags mapped to canonical vulnerability findings",
+    wiz: "Wiz adapter: cloud graph issue, toxic combination, exposure, and cloud asset context normalized",
+    prismacloud: "Prisma Cloud adapter: policy ID, cloud resource, account, and compliance context normalized",
+    snyk: "Snyk adapter: package, container, IaC, and code issue context normalized",
+    githubadvancedsecurity: "GitHub Advanced Security adapter: code scanning, secret scanning, and Dependabot alerts normalized",
+    securityhub: "AWS Security Hub adapter: ASFF resource, control, severity, and workflow state normalized",
+    defender: "Microsoft Defender adapter: exposure, endpoint, cloud, and identity recommendation normalized",
+    crowdstrike: "CrowdStrike adapter: endpoint exposure, identity protection, and detection context normalized"
+  };
+  return adapters[normalized] ?? `${source || "custom"} adapter: source payload normalized through canonical scanner contract`;
+}
+
+function exploitPreconditions(category: string, metadata: Record<string, unknown>) {
+  const domain = domainFromCategory(category, "");
+  const fromMetadata = Array.isArray(metadata.preconditions) ? metadata.preconditions.filter((item): item is string => typeof item === "string") : [];
+  if (fromMetadata.length) return fromMetadata;
+  const common = {
+    network: ["network access to exposed service", "reachable route between source and target", "service accepts unauthenticated or weakly authenticated traffic"],
+    iam: ["valid principal or token scope", "permission boundary allows target action", "lateral movement path through role or group membership"],
+    cloud: ["cloud API access", "resource policy allows action", "control-plane path to production account or project"],
+    kubernetes: ["cluster API or workload access", "service account token or admission gap", "network path to workload or control plane"],
+    application: ["user interaction or public endpoint", "vulnerable route or package reachable in runtime", "payload can reach sensitive operation"],
+    cicd: ["repository or runner access", "pipeline token scope", "write path to build, artifact, or deployment job"],
+    secrets: ["secret material exposed to user, process, log, or repository", "token is valid or replayable", "target service trusts the credential"],
+    data_store: ["data-plane network reachability", "credential or IAM grant to data store", "object/table policy allows read or write"]
+  } as Record<string, string[]>;
+  return common[domain] ?? ["asset is reachable", "finding is exploitable in the observed environment", "target has business impact"];
 }
 
 function isInitialAccess(category: string, source: string) {
@@ -342,6 +444,17 @@ function scoreDifficulty(chain: VulnerabilityChainStep[], hopCount: number, expo
   return clamp(55 + hopDifficulty + categoryDifficulty + exploitEase + noPatchEase + exposureEase, 1, 100);
 }
 
+function difficultyExplanation(score: number, chain: VulnerabilityChainStep[], hopCount: number, exposed: boolean) {
+  const reasons = [`Difficulty score ${score}/100 from ${hopCount - 1} graph hops and ${chain.length} chained findings.`];
+  reasons.push(exposed ? "Internet exposure lowers attacker effort." : "No direct internet exposure increases attacker effort.");
+  if (chain.some((step) => step.activeExploitation)) reasons.push("Active exploitation evidence lowers uncertainty and practical difficulty.");
+  if (chain.some((step) => step.exploitAvailable)) reasons.push("Public exploit availability lowers required attacker skill.");
+  if (chain.some((step) => step.domain === "iam")) reasons.push("IAM/token preconditions increase difficulty unless valid credentials already exist.");
+  if (chain.some((step) => step.domain === "network")) reasons.push("Network reachability preconditions are directly modeled as path edges.");
+  if (chain.some((step) => !step.patchAvailable)) reasons.push("Missing patch increases reliance on compensating controls and path breakers.");
+  return reasons;
+}
+
 function difficultyBand(score: number): AttackPathDifficulty {
   if (score >= 80) return "VERY_HIGH";
   if (score >= 60) return "HIGH";
@@ -357,6 +470,93 @@ function recommendBreakers(chain: VulnerabilityChainStep[], exposed: boolean, ta
   if (targetType.includes("DATABASE")) breakers.add("Restrict database route to approved service identities");
   breakers.add("Run simulation and compare before/after path risk before remediation");
   return [...breakers];
+}
+
+function recommendPathBreakers(hops: string[], chain: VulnerabilityChainStep[], before: number, after: number, fallback: string[]) {
+  const riskDelta = before - after;
+  const edges = hops.slice(1).map((hop, index) => `${hops[index]} -> ${hop}`);
+  const recommendations = edges.map((edge, index) => {
+    const step = chain[index] ?? chain[chain.length - 1];
+    const control = step ? preferredControlForDomain(step.domain) : fallback[0] ?? "Segmentation deny";
+    const estimatedRiskReduction = clamp(riskDelta * (index === 0 ? 0.7 : 0.45), 5, 95);
+    return {
+      edge,
+      control,
+      estimatedRiskReduction,
+      why: `Break this edge to remove ${step?.domain ?? "reachability"} preconditions and reduce approximately ${estimatedRiskReduction}% of path risk.`
+    };
+  });
+  return recommendations.length ? recommendations : [{ edge: "entry -> target", control: fallback[0] ?? "Simulation-backed path breaker", estimatedRiskReduction: riskDelta, why: `Break the highest-risk logical edge to reduce ${riskDelta}% projected path risk.` }];
+}
+
+function preferredControlForDomain(domain: string) {
+  const controls: Record<string, string> = {
+    network: "microsegmentation deny rule",
+    iam: "conditional IAM deny",
+    cloud: "cloud policy guardrail",
+    kubernetes: "admission controller or network policy",
+    application: "WAF/API rule",
+    cicd: "protected branch and runner isolation",
+    secrets: "secret revocation and token scope rotation",
+    data_store: "data-store access policy restriction",
+    vulnerability: "patch or virtual patch"
+  };
+  return controls[domain] ?? "segmentation or compensating control";
+}
+
+function simulateControls(chain: VulnerabilityChainStep[], before: number) {
+  const controls = [
+    { control: "patch", match: (step: VulnerabilityChainStep) => step.patchAvailable, base: 28 },
+    { control: "WAF rule", match: (step: VulnerabilityChainStep) => ["application", "network"].includes(step.domain), base: 24 },
+    { control: "IAM deny", match: (step: VulnerabilityChainStep) => step.domain === "iam", base: 32 },
+    { control: "segmentation", match: (step: VulnerabilityChainStep) => ["network", "data_store", "cloud"].includes(step.domain), base: 30 },
+    { control: "container rebuild", match: (step: VulnerabilityChainStep) => step.domain === "kubernetes", base: 22 },
+    { control: "cloud policy", match: (step: VulnerabilityChainStep) => step.domain === "cloud", base: 26 }
+  ];
+  return controls.map((control) => {
+    const matched = chain.filter(control.match).length;
+    const riskReduction = clamp(control.base + matched * 8, 5, 85);
+    return {
+      control: control.control,
+      beforeRisk: before,
+      afterRisk: clamp(before - riskReduction, 0, 100),
+      riskReduction,
+      assumptions: [
+        matched ? `${matched} chain steps match this control domain.` : "No direct domain match; control still modeled as compensating defense.",
+        "Control is simulated before execution and must be validated with scanner and reachability evidence.",
+        "Residual risk remains if alternate paths or credentials still exist."
+      ]
+    };
+  });
+}
+
+function remediationPlaybook(chain: VulnerabilityChainStep[], targetType: string, environment: string, before: number) {
+  const primaryDomain = chain.slice().sort((left, right) => right.businessRisk - left.businessRisk)[0]?.domain ?? "vulnerability";
+  const changeRisk = environment === "PRODUCTION" && before >= 75 ? "high" : environment === "PRODUCTION" ? "medium" : "low";
+  return {
+    playbookId: `${primaryDomain}_${targetType.toLowerCase()}_${changeRisk}`.replace(/[^a-z0-9_]+/g, "_"),
+    title: `${primaryDomain.toUpperCase()} remediation for ${targetType || "asset"} in ${environment || "unknown"}`,
+    owner: primaryDomain === "iam" ? "Identity platform owner" : primaryDomain === "cloud" ? "Cloud security owner" : primaryDomain === "application" ? "Application owner" : "Security remediation owner",
+    changeRisk,
+    steps: [
+      "Confirm asset owner and business service mapping.",
+      "Run before-state evidence collection and simulation.",
+      `Apply ${preferredControlForDomain(primaryDomain)} or permanent remediation.`,
+      "Route approval based on environment and change risk.",
+      "Validate scanner, reachability, and residual path risk after execution."
+    ]
+  };
+}
+
+function evidencePack(chain: VulnerabilityChainStep[], before: number, after: number) {
+  return {
+    beforeState: chain.map((step) => `${step.normalizedScanner}: ${step.title} on ${step.assetName}`),
+    simulationResult: [`Before risk ${before}%`, `After risk ${after}%`, ...simulateControls(chain, before).slice(0, 3).map((item) => `${item.control}: ${item.riskReduction}% modeled reduction`)],
+    approval: ["Business owner approval", "Security owner approval", "Change risk approval for production or crown-jewel paths"],
+    executionLog: ["Dry-run command or ticket reference", "Control diff or package/version change", "Rollback plan reference"],
+    validation: validationPlan(chain, "target"),
+    residualRisk: [`Residual path risk ${after}%`, "Document accepted assumptions, alternate path checks, and remaining compensating controls"]
+  };
 }
 
 function evidenceRequirements(chain: VulnerabilityChainStep[]) {
@@ -501,6 +701,97 @@ function buildAttackGraph(paths: AttackPath[]) {
     nodes: [...nodeMap.values()].sort((left, right) => right.risk - left.risk).slice(0, 80),
     edges: [...edgeMap.values()].sort((left, right) => right.weight - left.weight).slice(0, 120),
     vulnerabilityChains: vulnerabilityChains.slice(0, 8)
+  };
+}
+
+function estimateKHopBlastRadius(start: string, adjacency: Map<string, { toAssetId: string }[]>, k: number) {
+  const visited = new Set<string>([start]);
+  let frontier = [start];
+  for (let depth = 0; depth < k; depth += 1) {
+    const next = new Set<string>();
+    for (const current of frontier) {
+      for (const edge of adjacency.get(current) ?? []) {
+        if (!visited.has(edge.toAssetId)) next.add(edge.toAssetId);
+      }
+    }
+    next.forEach((item) => visited.add(item));
+    frontier = [...next];
+  }
+  return Math.max(0, visited.size - 1);
+}
+
+function computeCentrality(paths: AttackPath[]) {
+  const counts = new Map<string, { count: number; transit: number; maxRisk: number }>();
+  for (const path of paths) {
+    path.hops.forEach((hop, index) => {
+      const current = counts.get(hop) ?? { count: 0, transit: 0, maxRisk: 0 };
+      current.count += 1;
+      current.transit += index > 0 && index < path.hops.length - 1 ? 1 : 0;
+      current.maxRisk = Math.max(current.maxRisk, path.beforeRemediationRisk);
+      counts.set(hop, current);
+    });
+  }
+  const maxCount = Math.max(1, ...[...counts.values()].map((item) => item.count + item.transit));
+  return [...counts.entries()]
+    .map(([asset, item]) => ({
+      asset,
+      score: percentage(item.count + item.transit, maxCount),
+      paths: item.count,
+      maxRisk: item.maxRisk,
+      kind: item.transit > 0 && item.maxRisk >= 60 ? "choke_point" : "asset"
+    }))
+    .sort((left, right) => right.score - left.score || right.maxRisk - left.maxRisk);
+}
+
+function crownJewelExposure(target: { criticality: number; dataSensitivity: number; environment: string }) {
+  if (target.environment === "PRODUCTION" && target.criticality >= 5) return "critical";
+  if (target.environment === "PRODUCTION" || target.dataSensitivity >= 5 || target.criticality >= 5) return "high";
+  if (target.criticality >= 4 || target.dataSensitivity >= 4) return "medium";
+  return "low";
+}
+
+function scannerNormalizationAdapters() {
+  return ["Tenable", "Qualys", "Wiz", "Prisma Cloud", "Snyk", "GitHub Advanced Security", "AWS Security Hub", "Defender", "CrowdStrike"].map((source) => ({
+    source,
+    contract: scannerAdapterFor(source),
+    requiredFields: ["asset identity", "severity", "category", "finding id", "status"],
+    optionalFields: ["CVE/control id", "exploit availability", "active exploitation", "patch availability", "business tags"],
+    output: "canonical finding, exploit preconditions, chain domain, remediation playbook hints"
+  }));
+}
+
+function vulnerabilityChainingRules() {
+  return [
+    { domain: "network", chainsWhen: ["internet exposure", "reachable service", "weak segmentation"], breaker: "microsegmentation deny or WAF/API rule" },
+    { domain: "iam", chainsWhen: ["valid token scope", "privilege escalation", "cross-account trust"], breaker: "conditional IAM deny or just-in-time approval" },
+    { domain: "cloud", chainsWhen: ["public control-plane exposure", "misconfigured resource policy", "production account reachability"], breaker: "cloud policy guardrail" },
+    { domain: "kubernetes", chainsWhen: ["service account token", "workload escape", "cluster API reachability"], breaker: "admission control, network policy, or rebuild" },
+    { domain: "application", chainsWhen: ["public endpoint", "vulnerable package or route", "sensitive operation"], breaker: "patch or WAF/API rule" },
+    { domain: "cicd", chainsWhen: ["repo write path", "runner trust", "deployment token"], breaker: "branch protection and runner isolation" },
+    { domain: "secrets", chainsWhen: ["exposed credential", "valid token", "trusted target service"], breaker: "revocation and secret rotation" },
+    { domain: "data_store", chainsWhen: ["data-plane route", "grant or credential", "sensitive collection"], breaker: "data-store policy restriction" }
+  ];
+}
+
+function buildExecutiveViews(paths: AttackPath[]) {
+  const closed = paths.filter((path) => path.afterRemediationRisk < 35).length;
+  return {
+    topBusinessServicesAtRisk: paths.slice(0, 10).map((path) => ({
+      service: path.targetAsset,
+      entry: path.entryAsset,
+      beforeRisk: path.beforeRemediationRisk,
+      afterRisk: path.afterRemediationRisk,
+      difficulty: path.difficulty,
+      crownJewelExposure: path.crownJewelExposure
+    })),
+    riskReducedThisWeek: paths.reduce((sum, path) => sum + path.riskDelta, 0),
+    blockedRemediations: paths.filter((path) => path.remediationPriority === "immediate" && path.afterRemediationRisk >= 50).map((path) => ({
+      path: path.name,
+      blocker: path.pathBreakerRecommendations[0]?.control ?? "approval or compensating control required",
+      residualRisk: path.afterRemediationRisk
+    })),
+    attackPathsClosed: closed,
+    narrative: closed > 0 ? `${closed} attack paths are modeled below residual-risk threshold after recommended controls.` : "No attack paths are fully closed yet; approve the top path breakers to reduce residual risk."
   };
 }
 

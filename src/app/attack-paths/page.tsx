@@ -105,6 +105,56 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
         </div>
       </section>
 
+      <section className="grid cols-2" style={{ marginTop: 16 }}>
+        <div className="panel">
+          <div className="stack-head">
+            <div>
+              <h2>Graph Algorithms</h2>
+              <p>Shortest exploitable paths, k-hop blast radius, centrality, choke points, and crown-jewel exposure.</p>
+            </div>
+            <StatusBadge value={`${analytics.graphAlgorithms.chokePoints.length} choke points`} />
+          </div>
+          <table className="table">
+            <thead><tr><th>Signal</th><th>Top Result</th><th>Risk</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Shortest exploitable path</td>
+                <td>{analytics.graphAlgorithms.shortestExploitablePaths[0]?.name ?? "No path"}</td>
+                <td>{analytics.graphAlgorithms.shortestExploitablePaths[0]?.risk ?? 0}%</td>
+              </tr>
+              <tr>
+                <td>Highest centrality</td>
+                <td>{analytics.graphAlgorithms.centrality[0]?.asset ?? "No asset"}</td>
+                <td>{analytics.graphAlgorithms.centrality[0]?.score ?? 0}%</td>
+              </tr>
+              <tr>
+                <td>Crown-jewel exposure</td>
+                <td>{analytics.graphAlgorithms.crownJewelExposure[0]?.target ?? "No target"}</td>
+                <td>{analytics.graphAlgorithms.crownJewelExposure[0]?.beforeRisk ?? 0}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="panel">
+          <div className="stack-head">
+            <div>
+              <h2>Executive View</h2>
+              <p>Business services at risk, risk reduced this week, blocked remediations, and attack paths closed.</p>
+            </div>
+            <StatusBadge value={`${analytics.executiveViews.attackPathsClosed} closed`} />
+          </div>
+          <table className="table">
+            <tbody>
+              <tr><td>Risk Reduced This Week</td><td>{analytics.executiveViews.riskReducedThisWeek}%</td></tr>
+              <tr><td>Blocked Remediations</td><td>{analytics.executiveViews.blockedRemediations.length}</td></tr>
+              <tr><td>Top Service At Risk</td><td>{analytics.executiveViews.topBusinessServicesAtRisk[0]?.service ?? "No service"}</td></tr>
+              <tr><td>Leadership Narrative</td><td>{analytics.executiveViews.narrative}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="panel">
         <div className="stack-head">
           <div>
@@ -204,6 +254,7 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
               <th>After</th>
               <th>Delta</th>
               <th>Scanners</th>
+              <th>Breaker</th>
               <th>Evidence</th>
               <th>Priority</th>
             </tr>
@@ -221,6 +272,7 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
                 <td>{path.afterRemediationRisk}%</td>
                 <td>{path.riskDelta}%</td>
                 <td>{path.scannerInputs.join(", ")}</td>
+                <td>{path.pathBreakerRecommendations[0]?.control ?? path.recommendedBreakers[0]}</td>
                 <td>{path.evidenceRequirements.slice(0, 3).join(", ")}</td>
                 <td><StatusBadge value={path.remediationPriority} /></td>
               </tr>
