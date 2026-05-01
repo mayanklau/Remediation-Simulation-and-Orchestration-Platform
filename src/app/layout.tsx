@@ -33,6 +33,7 @@ const nav = [
   { href: "/findings", label: "Findings", icon: ShieldAlert },
   { href: "/assets", label: "Assets", icon: Boxes },
   { href: "/asset-graph", label: "Asset Graph", icon: Network },
+  { href: "/attack-paths", label: "Attack Paths", icon: Network },
   { href: "/operating-system", label: "Control Plane", icon: Network },
   { href: "/remediation", label: "Remediation Queue", icon: GitPullRequestArrow },
   { href: "/simulations", label: "Simulations", icon: Network },
