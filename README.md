@@ -52,12 +52,14 @@ This repository contains a full-stack Next.js application with a Prisma-backed d
 | Surface | Route | Purpose |
 | --- | --- | --- |
 | Asset Graph | `/asset-graph` | Shows asset dependency edges, risk transfer, exposure, maturity scores, hotspots, and service concentration. |
+| Autonomous Control Plane | `/operating-system` | Shows closed-loop remediation coverage, connector maturity, execution playbooks, governance state, and simulation learning. |
 | Policy Builder | `/policies` | Displays enforced and advisory governance policies and can create a production change-board guardrail through the policy API. |
+| Exceptions and Freeze Windows | `/exceptions` | Tracks risk exceptions, production change freezes, and approval routing as governed policies. |
 | Evidence Pack Readiness | `/evidence` | Scores each workflow for simulation, plan, approval, evidence, and validation completeness. |
 | Audit Timeline | `/audit` | Combines audit logs, connector runs, automation runs, and report snapshots into one control-plane history. |
 | Rich Simulation Detail | `/simulations` | Surfaces approval requirements and rollout steps from simulation result contracts. |
 
-The corresponding APIs are `/api/asset-graph` and `/api/evidence/packs`, both backed by Prisma queries and application logic rather than static seed responses.
+The corresponding APIs are `/api/asset-graph`, `/api/operating-system`, `/api/policies`, `/api/evidence/packs`, and `/api/audit/timeline`, all backed by Prisma queries and application logic rather than static seed responses.
 
 ## Phase Roadmap Coverage
 
@@ -401,6 +403,11 @@ Primary endpoints:
 - `/automation` - Execution automation
 - `/campaigns` - Remediation campaigns
 - `/governance` - Autonomous remediation governance
+- `/asset-graph` - Enterprise asset dependency graph
+- `/operating-system` - Closed-loop remediation operating system
+- `/policies` - Governance policy builder
+- `/exceptions` - Risk exceptions and production freeze windows
+- `/audit` - Unified audit timeline
 - `/enterprise` - SSO, RBAC, connector readiness
 - `/settings` - Tenant settings
 
@@ -423,6 +430,7 @@ More detail is available in [docs/API.md](docs/API.md).
 | Enterprise | `GET /api/sso`, `POST /api/sso`, `GET /api/rbac/evaluate`, `POST /api/rbac/evaluate` |
 | Reporting | `GET /api/reports`, `POST /api/reports` |
 | Automation | `GET /api/automation/hooks`, `POST /api/automation/hooks`, `GET /api/automation/run`, `POST /api/automation/run` |
+| Maturity | `GET /api/asset-graph`, `GET /api/operating-system`, `POST /api/operating-system`, `GET /api/evidence/packs`, `GET /api/audit/timeline` |
 | Governance | `GET /api/policies`, `POST /api/policies`, `POST /api/governance/continuous-simulation`, `GET /api/governance/predictive-risk`, `POST /api/governance/apply-fix`, `GET /api/campaigns`, `POST /api/campaigns` |
 
 ## Data Model Highlights
@@ -451,7 +459,7 @@ Key Prisma models:
 - `AutomationRun`
 - `Policy`
 - `RemediationCampaign`
-- `AuditLog`
+- `AuditLog@
 
 ## Development Commands
 
