@@ -47,6 +47,18 @@ This repository contains a full-stack Next.js application with a Prisma-backed d
 - Self-updating remediation campaigns
 - Operational UI for dashboard, findings, assets, remediation, simulations, workflows, evidence, integrations, reports, automation, campaigns, governance, and enterprise readiness
 
+### Enterprise Maturity Surfaces
+
+| Surface | Route | Purpose |
+| --- | --- | --- |
+| Asset Graph | `/asset-graph` | Shows asset dependency edges, risk transfer, exposure, maturity scores, hotspots, and service concentration. |
+| Policy Builder | `/policies` | Displays enforced and advisory governance policies and can create a production change-board guardrail through the policy API. |
+| Evidence Pack Readiness | `/evidence` | Scores each workflow for simulation, plan, approval, evidence, and validation completeness. |
+| Audit Timeline | `/audit` | Combines audit logs, connector runs, automation runs, and report snapshots into one control-plane history. |
+| Rich Simulation Detail | `/simulations` | Surfaces approval requirements and rollout steps from simulation result contracts. |
+
+The corresponding APIs are `/api/asset-graph` and `/api/evidence/packs`, both backed by Prisma queries and application logic rather than static seed responses.
+
 ## Phase Roadmap Coverage
 
 | Phase | Goal | Implemented Surface |

@@ -4,10 +4,12 @@ import {
   Boxes,
   Bot,
   CheckCircle2,
+  ClipboardCheck,
   FileCheck,
   GitPullRequestArrow,
   LayoutDashboard,
   Network,
+  ScrollText,
   ShieldCheck,
   SlidersHorizontal,
   TrendingUp,
@@ -25,6 +27,7 @@ const nav = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/findings", label: "Findings", icon: ShieldAlert },
   { href: "/assets", label: "Assets", icon: Boxes },
+  { href: "/asset-graph", label: "Asset Graph", icon: Network },
   { href: "/remediation", label: "Remediation Queue", icon: GitPullRequestArrow },
   { href: "/simulations", label: "Simulations", icon: Network },
   { href: "/workflows", label: "Approvals", icon: CheckCircle2 },
@@ -32,9 +35,11 @@ const nav = [
   { href: "/integrations", label: "Integrations", icon: Activity },
   { href: "/reports", label: "Reports", icon: TrendingUp },
   { href: "/automation", label: "Automation", icon: SlidersHorizontal },
+  { href: "/policies", label: "Policies", icon: ClipboardCheck },
   { href: "/campaigns", label: "Campaigns", icon: Bot },
   { href: "/governance", label: "Governance", icon: ShieldCheck },
   { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
+  { href: "/audit", label: "Audit", icon: ScrollText },
   { href: "/settings", label: "Settings", icon: Settings }
 ];
 

@@ -1,5 +1,6 @@
 import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
+import { parseJsonObject } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateDefaultTenant } from "@/lib/tenant";
 
@@ -28,19 +29,39 @@ export default async function SimulationsPage() {
                 <th>Confidence</th>
                 <th>Risk Reduction</th>
                 <th>Operational Risk</th>
+                <th>Plan Detail</th>
               </tr>
             </thead>
             <tbody>
-              {simulations.map((simulation) => (
-                <tr key={simulation.id}>
-                  <td>{simulation.remediationAction.finding.title}</td>
-                  <td>{simulation.type}</td>
-                  <td>{simulation.status}</td>
-                  <td>{Math.round(simulation.confidence)}%</td>
-                  <td>{Math.round(simulation.riskReductionEstimate)}%</td>
-                  <td>{Math.round(simulation.operationalRisk)}%</td>
-                </tr>
-              ))}
+              {simulations.map((simulation) => {
+                const result = parseJsonObject<{
+                  requiredApprovals?: string[];
+                  recommendedRollout?: string[];
+                  rollbackPlan?: string[];
+                  validationSteps?: string[];
+                  dependencyImpact?: Array<{ name: string; relation: string }>;
+                }>(simulation.resultJson, {});
+                return (
+                  <tr key={simulation.id}>
+                    <td>
+                      <strong>{simulation.remediationAction.finding.title}</strong>
+                      <br />
+                      <span className="muted">{simulation.remediationAction.finding.asset?.name ?? "Unmapped asset"}</span>
+                    </td>
+                    <td>{simulation.type}</td>
+                    <td>{simulation.status}</td>
+                    <td>{Math.round(simulation.confidence)}%</td>
+                    <td>{Math.round(simulation.riskReductionEstimate)}%</td>
+                    <td>{Math.round(simulation.operationalRisk)}%</td>
+                    <td>
+                      <strong>{result.requiredApprovals?.join(", ") || "No approvals"}</strong>
+                      <ul className="detail-list">
+                        {(result.recommendedRollout ?? []).slice(0, 3).map((step) => <li key={step}>{step}</li>)}
+                      </ul>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

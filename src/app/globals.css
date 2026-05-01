@@ -126,6 +126,11 @@ p {
   color: var(--muted);
 }
 
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .grid {
   display: grid;
   gap: 16px;
@@ -281,6 +286,58 @@ p {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 18px;
+}
+
+.stack-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.stack-head p {
+  margin: 4px 0 0;
+}
+
+.graph-list,
+.timeline {
+  display: grid;
+  gap: 10px;
+}
+
+.graph-edge,
+.timeline-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.graph-edge div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.graph-edge span,
+.timeline-item p {
+  color: var(--muted);
+}
+
+.timeline-item p {
+  margin: 4px 0 0;
+}
+
+.detail-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
 }
 
 .mono {
