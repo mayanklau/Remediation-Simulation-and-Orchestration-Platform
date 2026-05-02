@@ -54,6 +54,7 @@ export const routePermissions: RoutePermission[] = [
   { pattern: /^\/api\/sso$/, methods: ["GET"], permission: "tenant:read" },
   { pattern: /^\/api\/sso$/, methods: ["POST"], permission: "tenant:write" },
   { pattern: /^\/api\/enterprise-maturity$/, methods: ["GET", "POST"], permission: "report:read" },
+  { pattern: /^\/api\/enterprise-readiness$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/pilot-readiness$/, methods: ["GET", "POST"], permission: "report:read" },
   { pattern: /^\/api\/pilot-control-plane$/, methods: ["GET", "POST"], permission: "report:read" },
   { pattern: /^\/api\/operating-system$/, methods: ["GET", "POST"], permission: "report:read" },

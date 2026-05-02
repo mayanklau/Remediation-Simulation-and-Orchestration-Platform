@@ -59,6 +59,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - Observability, health checks, run records, and production telemetry
 - CI workflow, Docker Compose, production environment contract, baseline Prisma migration, dependency audit, container scan, and quality gates
 - React Flow graph-library UI for asset dependencies, attack paths, exploit preconditions, crown jewels, and path breaker controls with pan, zoom, minimap, risk filtering, inspector, JSON export, empty states, and drill-down views
+- Once-and-for-all enterprise readiness catalog covering identity, tenancy, secrets, connectors, ingestion, vulnerability analytics, simulation, orchestration, AI governance, evidence, reporting, platform architecture, security, observability, testing, DevOps, product experience, and commercial packaging
 
 ## Key Modules
 
@@ -80,6 +81,7 @@ EY Remediation Twin provides a full remediation operating loop:
 | Virtual Patching | Compensating controls and attack-path breaker workflow. |
 | Agentic Orchestrator | Model-agnostic planning layer with tool registry, safety rails, dry-run execution, and audit persistence. |
 | Enterprise Maturity | Ten-track maturity command center. |
+| Enterprise Readiness Catalog | Full enterprise control map with implemented, contract-ready, and external-setup-required status. |
 | Pilot Control Plane | Production-pilot activation for real enterprise readiness. |
 | Final Production | Final deployability and production closure controls. |
 | Production Ops | Runtime workers, SSO/session contracts, telemetry, evidence sealing, and live connector dry-runs. |

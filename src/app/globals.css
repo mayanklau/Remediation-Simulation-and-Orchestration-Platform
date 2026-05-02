@@ -206,6 +206,12 @@ textarea {
   box-shadow: 0 0 0 4px rgba(6, 118, 71, 0.12);
 }
 
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .page-head {
   display: flex;
   justify-content: space-between;

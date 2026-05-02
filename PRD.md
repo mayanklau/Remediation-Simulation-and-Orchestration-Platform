@@ -64,6 +64,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Pilot control plane for production-pilot activation
 - Final production completion center
 - Production operations control room
+- Once-and-for-all enterprise readiness control catalog across all enterprise domains
 
 ## Enterprise Maturity Requirements
 
@@ -223,6 +224,7 @@ The product must provide the final operational controls required to run a seriou
 - `/final-production`
 - `/production-ops`
 - `/enterprise-maturity`
+- `/enterprise-readiness`
 - `/governance`
 - `/enterprise`
 - `/audit`
