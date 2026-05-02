@@ -7,6 +7,7 @@ describe("route permission contract", () => {
     expect(routePermissionFor("/api/findings", "GET")).toBe("finding:read");
     expect(routePermissionFor("/api/remediation-actions/action-1/simulate", "POST")).toBe("simulation:run");
     expect(routePermissionFor("/api/workflows/workflow-1/approvals", "POST")).toBe("workflow:approve");
+    expect(routePermissionFor("/api/cyber-risk-intelligence", "GET")).toBe("report:read");
     expect(routePermissionFor("/api/connectors/live", "POST")).toBe("connector:run");
     expect(routePermissionFor("/api/integrations", "GET")).toBe("connector:read");
     expect(routePermissionFor("/api/integrations", "POST")).toBe("connector:run");

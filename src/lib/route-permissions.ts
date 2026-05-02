@@ -39,6 +39,7 @@ export const routePermissions: RoutePermission[] = [
   { pattern: /^\/api\/dashboard$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/attack-paths$/, methods: ["GET"], permission: "finding:read" },
   { pattern: /^\/api\/attack-paths$/, methods: ["POST"], permission: "report:read" },
+  { pattern: /^\/api\/cyber-risk-intelligence$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/virtual-patching$/, methods: ["GET"], permission: "finding:read" },
   { pattern: /^\/api\/virtual-patching$/, methods: ["POST"], permission: "automation:run" },
   { pattern: /^\/api\/policies$/, methods: ["GET"], permission: "policy:read" },

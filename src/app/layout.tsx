@@ -40,6 +40,7 @@ const navGroups = [
       { href: "/assets", label: "Assets", icon: Boxes },
       { href: "/asset-graph", label: "Asset Graph", icon: Network },
       { href: "/attack-paths", label: "Attack Paths", icon: Network },
+      { href: "/cyber-risk-intelligence", label: "Risk Intel", icon: Shield },
       { href: "/operating-system", label: "Control Plane", icon: Network }
     ]
   },

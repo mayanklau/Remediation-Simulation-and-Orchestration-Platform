@@ -47,6 +47,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - JSON and CSV finding ingestion
 - Asset inventory and asset graph
 - Graph-native vulnerability chaining and attack-path analytics
+- Advanced cyber-risk intelligence for exploit fusion, business-service impact, attack-path confidence, exposure management, change-risk modeling, remediation strategy selection, control-effectiveness validation, threat-informed prioritization, crown-jewel governance, exception governance, campaign intelligence, continuous validation, scanner trust scoring, playbook marketplace, risk economics, and executive narratives
 - Deduplication and source correlation
 - Risk scoring, attack-path difficulty, before/after remediation risk, and remediation action generation
 - Simulation, planning, workflow, approvals, and evidence
@@ -212,6 +213,7 @@ The product must provide the final operational controls required to run a seriou
 - `/assets`
 - `/asset-graph`
 - `/attack-paths`
+- `/cyber-risk-intelligence`
 - `/remediation`
 - `/simulations`
 - `/workflows`
