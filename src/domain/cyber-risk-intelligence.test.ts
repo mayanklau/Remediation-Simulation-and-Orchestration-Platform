@@ -10,6 +10,10 @@ describe("cyber risk intelligence model", () => {
     expect(ids).toContain("control_effectiveness");
     expect(ids).toContain("exception_governance");
     expect(model.economics.map((metric) => metric.id)).toContain("risk_reduced_per_hour");
+    expect(model.scenarioPacks.map((scenario) => scenario.id)).toContain("ransomware_path");
+    expect(model.governanceMatrix.map((row) => row.id)).toContain("toxic_combinations");
+    expect(model.governanceMatrix.map((row) => row.id)).toContain("regulatory_mapping");
+    expect(model.governanceMatrix.map((row) => row.id)).toContain("identity_cloud_data_risk");
     expect(model.summary.capabilities).toBeGreaterThanOrEqual(14);
   });
 });

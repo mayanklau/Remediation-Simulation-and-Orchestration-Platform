@@ -14,7 +14,7 @@ export default function CyberRiskIntelligencePage() {
       <section className="grid cols-4">
         <div className="metric"><span>Capabilities</span><strong>{model.summary.capabilities}</strong></div>
         <div className="metric"><span>Economics</span><strong>{model.summary.economicsMetrics}</strong></div>
-        <div className="metric"><span>Narratives</span><strong>{model.summary.executiveNarratives}</strong></div>
+        <div className="metric"><span>Scenarios</span><strong>{model.summary.scenarioPacks}</strong></div>
         <div className="metric"><span>Score</span><strong>{model.summary.intelligenceScore}%</strong></div>
       </section>
       <div style={{ height: 18 }} />
@@ -38,6 +38,23 @@ export default function CyberRiskIntelligencePage() {
             </table>
           </div>
         ))}
+      </section>
+      <div style={{ height: 18 }} />
+      <section className="grid cols-2">
+        <div className="panel">
+          <h2>Adversary Scenario Packs</h2>
+          <table className="table">
+            <thead><tr><th>Scenario</th><th>Kill Chain</th><th>Controls</th><th>Status</th></tr></thead>
+            <tbody>{model.scenarioPacks.map((scenario) => <tr key={scenario.id}><td>{scenario.name}</td><td>{scenario.killChain.join(" -> ")}</td><td>{scenario.controls.join(", ")}</td><td><StatusBadge value={scenario.status} /></td></tr>)}</tbody>
+          </table>
+        </div>
+        <div className="panel">
+          <h2>Governance And Decisioning Matrix</h2>
+          <table className="table">
+            <thead><tr><th>Control</th><th>Scope</th><th>Output</th><th>Status</th></tr></thead>
+            <tbody>{model.governanceMatrix.map((row) => <tr key={row.id}><td>{row.name}</td><td>{row.scope}</td><td>{row.output}</td><td><StatusBadge value={row.status} /></td></tr>)}</tbody>
+          </table>
+        </div>
       </section>
       <div style={{ height: 18 }} />
       <section className="grid cols-2">

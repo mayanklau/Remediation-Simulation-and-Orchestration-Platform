@@ -40,7 +40,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - JSON, CSV, and prototype finding ingestion
 - Asset inventory and dependency graph
 - Graph-native vulnerability chaining and attack-path analytics for scanner-normalized inputs
-- Advanced cyber-risk intelligence with exploit intelligence fusion, business-service risk graph, attack-path confidence, exposure management, change-risk modeling, remediation strategy selection, control-effectiveness validation, threat-informed prioritization, crown-jewel governance, exception governance, campaign intelligence, continuous validation, scanner trust scoring, playbook marketplace, risk economics, and executive narratives
+- Advanced cyber-risk intelligence with exploit intelligence fusion, business-service risk graph, attack-path confidence, exposure management, adversary scenario packs, risk appetite, control coverage matrix, toxic-combination detection, kill-chain staging, regulatory mapping, security debt ledger, dynamic SLA intelligence, change-risk modeling, remediation strategy selection, control-effectiveness validation, threat-informed prioritization, crown-jewel governance, exception governance, campaign intelligence, continuous validation, scanner trust scoring, playbook marketplace, risk economics, and executive narratives
 - Risk scoring and business-risk prioritization
 - Customer-facing before and after remediation risk scoring
 - Remediation action generation
@@ -74,7 +74,7 @@ EY Remediation Twin provides a full remediation operating loop:
 | Assets | Inventory of systems, owners, exposure, criticality, and sensitivity. |
 | Asset Graph | Dependency graph with risk transfer, blast radius, and concentration analysis. |
 | Attack Path Analytics | Scanner-agnostic vulnerability chains, path difficulty, and before/after remediation risk. |
-| Cyber Risk Intelligence | Exploit intelligence, business-service impact, exposure scoring, remediation economics, control validation, exception governance, and executive narratives. |
+| Cyber Risk Intelligence | Exploit intelligence, adversary scenarios, risk appetite, control coverage, toxic combinations, regulatory mapping, identity/cloud/data risk, remediation economics, control validation, exception governance, and executive narratives. |
 | Remediation Queue | Generated remediation actions that can be simulated, planned, approved, and verified. |
 | Simulations | Historical simulation runs with confidence, risk reduction, and operational risk. |
 | Workflows | Approval and execution workflow tracking. |
