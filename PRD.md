@@ -160,8 +160,8 @@ The product must turn scanner noise into end-to-end vulnerability analytics:
 | Attack graph construction | Build logical attack paths from asset dependencies, exposure, exploit preconditions, identity/control relationships, high-value targets, and vulnerability metadata. |
 | Bounded path enumeration | Enumerate bounded simple paths from exposed or initial-access assets to crown-jewel, production, critical, or sensitive targets. |
 | Vulnerability chaining | Convert each path into ordered chain steps with source scanner, category, severity, exploit status, patchability, business risk, and mapped attack technique. |
-| Attack path graph UI | Render entry assets, reachability edges, exploit-precondition findings, crown-jewel targets, and breaker controls as a graph-native workbench. |
-| Vulnerability chain graph UI | Render each ordered vulnerability chain as connected graph nodes with scanner source, mapped technique, difficulty, before/after risk, and breaker outcome. |
+| Attack path graph UI | Render entry assets, reachability edges, exploit-precondition findings, crown-jewel targets, and breaker controls as a React Flow graph workbench with pan, zoom, minimap, filters, node inspector, and export. |
+| Vulnerability chain graph UI | Render each ordered vulnerability chain as connected graph nodes with scanner source, mapped technique, difficulty, before/after risk, breaker outcome, and graph-library-ready API contracts. |
 | Difficulty scoring | Label every path as `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH` using hop count, exposure, exploit availability, active exploitation, patchability, and control friction. |
 | Before/after risk | Show customer-facing risk before remediation, estimated residual risk after remediation, and the risk delta expected from patching, virtual patching, path breakers, and policy controls. |
 | Breaker recommendation | Recommend microsegmentation, WAF/API gateway controls, service mesh policy, conditional IAM deny, route quarantine, and database access restrictions. |

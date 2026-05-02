@@ -57,7 +57,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - Evidence sealing with hash chaining and retention metadata
 - Observability, health checks, run records, and production telemetry
 - CI workflow, Docker Compose, production environment contract, baseline Prisma migration, dependency audit, container scan, and quality gates
-- Frontend graph controls for filtering, zoom density, JSON export, empty states, and drill-down views
+- React Flow graph-library UI for asset dependencies, attack paths, exploit preconditions, crown jewels, and path breaker controls with pan, zoom, minimap, risk filtering, inspector, JSON export, empty states, and drill-down views
 
 ## Key Modules
 
@@ -102,8 +102,8 @@ What it does:
 - normalizes findings from vulnerability scanners, cloud posture tools, code scanners, IAM analyzers, Kubernetes controls, compliance scanners, and ticket sources into a common chain model
 - combines asset dependency edges, internet exposure, criticality, sensitivity, finding category, exploit availability, active exploitation, patch availability, and policy controls
 - constructs bounded attack paths from exposed or initial-access assets to crown-jewel and production targets
-- returns a graph contract with entry nodes, reachability edges, finding/precondition nodes, crown-jewel targets, and breaker controls
-- renders a dedicated Attack Path Graph UI that shows how exposure moves through reachable systems into business-critical targets
+- returns a graph-library-ready contract with entry nodes, reachability edges, finding/precondition nodes, crown-jewel targets, and breaker controls
+- renders a dedicated React Flow Attack Path Graph UI that shows how exposure moves through reachable systems into business-critical targets
 - renders a separate Vulnerability Chaining Graph UI that shows each ordered exploit chain, scanner source, mapped technique, difficulty, residual risk, and path breaker
 - labels each path with difficulty: `LOW`, `MEDIUM`, `HIGH`, or `VERY_HIGH`
 - calculates before-remediation path risk, after-remediation residual risk, risk delta, likelihood, and business impact

@@ -100,6 +100,40 @@ export async function buildAssetGraph(tenantId: string) {
     generatedAt: new Date().toISOString(),
     nodes,
     edges,
+    libraryGraph: {
+      engine: "@xyflow/react",
+      layout: "risk-layered-dependency",
+      nodes: nodes.map((node) => ({
+        id: node.id,
+        label: node.name,
+        kind: node.internetExposure ? "internet_exposed" : node.environment === "PRODUCTION" ? "production" : "asset",
+        group: node.environment,
+        risk: node.maxBusinessRisk,
+        maturity: node.maturityScore,
+        metadata: {
+          owner: node.owner,
+          team: node.team,
+          type: node.type,
+          criticality: node.criticality,
+          dataSensitivity: node.dataSensitivity,
+          openFindingCount: node.openFindingCount
+        }
+      })),
+      edges: edges.map((edge) => ({
+        id: edge.id,
+        source: edge.fromAssetId,
+        target: edge.toAssetId,
+        label: edge.relation,
+        kind: edge.relation,
+        weight: edge.riskTransfer,
+        confidence: edge.confidence,
+        metadata: {
+          source: edge.source,
+          from: edge.fromAssetName,
+          to: edge.toAssetName
+        }
+      }))
+    },
     hotspots,
     serviceConcentration,
     summary: {

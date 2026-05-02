@@ -217,7 +217,28 @@ export async function buildAttackPathAnalytics(tenantId: string) {
     graph: {
       method: "Layered logical attack graph: entry assets, reachable services, exploit preconditions, crown-jewel targets, and policy-backed breaker controls.",
       nodes: graphModel.nodes,
-      edges: graphModel.edges
+      edges: graphModel.edges,
+      libraryGraph: {
+        engine: "@xyflow/react",
+        layout: "layered-attack-path",
+        nodes: graphModel.nodes.map((node) => ({
+          id: node.id,
+          label: node.label,
+          kind: node.kind,
+          group: node.group,
+          risk: node.risk,
+          difficulty: node.difficulty
+        })),
+        edges: graphModel.edges.map((edge) => ({
+          id: edge.id,
+          source: edge.from,
+          target: edge.to,
+          label: edge.label,
+          kind: edge.relation,
+          weight: edge.weight,
+          pathId: edge.pathId
+        }))
+      }
     },
     vulnerabilityChainGraph: graphModel.vulnerabilityChains,
     paths

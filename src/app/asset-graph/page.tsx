@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/EmptyState";
+import { GraphCanvas } from "@/components/GraphCanvas";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { buildAssetGraph } from "@/domain/asset-graph";
@@ -36,6 +37,14 @@ export default async function AssetGraphPage() {
           <strong>{graph.summary.averageMaturity}%</strong>
         </div>
       </div>
+
+      <GraphCanvas
+        title="Interactive Enterprise Asset Graph"
+        description="Real graph-library visualization with pan, zoom, minimap, risk filtering, dependency edges, internet exposure, production concentration, and graph JSON export."
+        mode="asset"
+        nodes={graph.libraryGraph.nodes}
+        edges={graph.libraryGraph.edges}
+      />
 
       <div className="split" style={{ marginTop: 16 }}>
         <div className="panel">

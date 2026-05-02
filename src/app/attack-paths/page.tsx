@@ -1,4 +1,5 @@
 import { ApiButton } from "@/components/ApiButton";
+import { GraphCanvas } from "@/components/GraphCanvas";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { buildAttackPathAnalytics } from "@/domain/attack-path-analytics";
@@ -186,6 +187,13 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
           <button type="submit">Apply</button>
           <a className="button-link" href="/api/attack-paths">Export JSON</a>
         </form>
+        <GraphCanvas
+          title="Interactive Attack Path Graph"
+          description="Real graph-library representation of entry points, exploit preconditions, vulnerable findings, crown jewels, and path breaker controls with pan, zoom, minimap, risk filters, and export."
+          mode="attack"
+          nodes={analytics.graph.libraryGraph.nodes.filter((node) => nodeKind === "all" || node.kind === nodeKind)}
+          edges={analytics.graph.libraryGraph.edges.filter((edge) => nodeKind === "all" || graphNodeIds.has(edge.source) || graphNodeIds.has(edge.target))}
+        />
         <div className={`attack-graph-board zoom-${zoom}`}>
           <div className="graph-column">
             <span>Entry</span>
