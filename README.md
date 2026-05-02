@@ -47,6 +47,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - Rollout, rollback, validation, and evidence plan generation
 - Approval workflow with comments, decisions, and evidence
 - Jira, GitHub, ServiceNow, scanner, cloud, Kubernetes, and IAM connector framework
+- Manual connector and integration factory for any scanner, CMDB, ticketing, cloud, code, IAM, notification, or custom HTTP provider with profile persistence and dry-run health checks
 - Virtual patching and attack-path breaker control center
 - Agentic remediation orchestrator for any LLM, SLM, model gateway, or deterministic fallback
 - Governance policies, risk exceptions, freeze windows, evidence gates, and auto-approval
@@ -72,7 +73,7 @@ EY Remediation Twin provides a full remediation operating loop:
 | Simulations | Historical simulation runs with confidence, risk reduction, and operational risk. |
 | Workflows | Approval and execution workflow tracking. |
 | Evidence | Evidence readiness and evidence pack exports. |
-| Connectors | Enterprise connector onboarding and dry-run execution. |
+| Connectors | Enterprise connector onboarding, manual integration profiles, and dry-run execution. |
 | Ingestion Jobs | Durable ingestion operation tracking. |
 | Campaign Board | Campaign-level ownership, progress, blockers, and risk. |
 | Governance | Policies, exceptions, continuous simulation, predictive risk, and governed fixes. |

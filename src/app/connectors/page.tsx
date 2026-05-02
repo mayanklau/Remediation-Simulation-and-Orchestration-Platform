@@ -1,4 +1,5 @@
 import { ApiButton } from "@/components/ApiButton";
+import { ManualConnectorFlow } from "@/components/ManualConnectorFlow";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { buildPilotReadinessModel } from "@/domain/pilot-readiness";
@@ -23,6 +24,8 @@ export default async function ConnectorsPage() {
           payload={{ action: "create_connector", provider: "tenable", name: "Tenable pilot scanner", owner: "security-operations", scopes: ["ingest_findings"], syncCadence: "daily" }}
         />
       </PageHeader>
+
+      <ManualConnectorFlow />
 
       <section className="grid cols-4">
         <div className="panel metric">

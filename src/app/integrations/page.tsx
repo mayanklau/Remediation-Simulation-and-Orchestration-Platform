@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/EmptyState";
+import { ManualConnectorFlow } from "@/components/ManualConnectorFlow";
 import { PageHeader } from "@/components/PageHeader";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateDefaultTenant } from "@/lib/tenant";
@@ -10,6 +11,7 @@ export default async function IntegrationsPage() {
   return (
     <>
       <PageHeader eyebrow="Connector framework" title="Integrations" description="Register scanners, ticketing systems, code hosts, cloud providers, notification tools, and execution systems." />
+      <ManualConnectorFlow compact />
       <div className="split">
         <div className="panel">
           <h2>Configured Integrations</h2>

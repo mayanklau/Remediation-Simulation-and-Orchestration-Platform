@@ -634,6 +634,24 @@ p {
   color: #1a1a24;
 }
 
+.manual-connector {
+  margin-bottom: 16px;
+}
+
+.connector-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
 .zoom-compact .graph-node {
   min-height: 58px;
   padding: 8px;
@@ -826,6 +844,10 @@ p {
   }
 
   .graph-link {
+    grid-template-columns: 1fr;
+  }
+
+  .connector-form-grid {
     grid-template-columns: 1fr;
   }
 }

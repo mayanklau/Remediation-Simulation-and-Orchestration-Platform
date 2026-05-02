@@ -50,7 +50,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Deduplication and source correlation
 - Risk scoring, attack-path difficulty, before/after remediation risk, and remediation action generation
 - Simulation, planning, workflow, approvals, and evidence
-- Connector registry and durable connector runs
+- Connector registry, manual integration factory, durable connector runs, and dry-run health checks
 - Pilot readiness, connector onboarding, and ingestion jobs
 - SSO metadata, RBAC evaluation, reporting, and audit
 - Automation hooks for CI/CD, Kubernetes, cloud, IAM, and policy fixes
@@ -213,6 +213,7 @@ The product must provide the final operational controls required to run a seriou
 - `/workflows`
 - `/evidence`
 - `/connectors`
+- `/integrations`
 - `/ingestion-jobs`
 - `/campaign-board`
 - `/operating-system`

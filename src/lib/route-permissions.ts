@@ -18,6 +18,8 @@ export const routePermissions: RoutePermission[] = [
   { pattern: /^\/api\/findings(\/.+)?$/, methods: ["POST", "PATCH", "PUT", "DELETE"], permission: "finding:write" },
   { pattern: /^\/api\/ingest\/.+$/, methods: allMethods, permission: "connector:run" },
   { pattern: /^\/api\/mock-ingest$/, methods: allMethods, permission: "connector:run" },
+  { pattern: /^\/api\/integrations$/, methods: ["GET"], permission: "connector:read" },
+  { pattern: /^\/api\/integrations$/, methods: ["POST"], permission: "connector:run" },
   { pattern: /^\/api\/connectors\/.+$/, methods: ["GET"], permission: "connector:read" },
   { pattern: /^\/api\/connectors\/.+$/, methods: ["POST"], permission: "connector:run" },
   { pattern: /^\/api\/remediation-actions(\/.+)?$/, methods: ["GET"], permission: "finding:read" },
