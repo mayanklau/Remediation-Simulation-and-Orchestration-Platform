@@ -79,6 +79,7 @@ const navGroups = [
       { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
       { href: "/governance", label: "Governance", icon: ShieldCheck },
       { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
+      { href: "/go-live", label: "Go Live", icon: Sparkles },
       { href: "/audit", label: "Audit", icon: ScrollText },
       { href: "/settings", label: "Settings", icon: Settings }
     ]
