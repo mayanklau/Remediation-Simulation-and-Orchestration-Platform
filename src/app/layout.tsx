@@ -27,8 +27,8 @@ import {
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Remediation Twin",
-  description: "Enterprise remediation operating system"
+  title: "EY Remediation Twin",
+  description: "EY-themed enterprise remediation operating system"
 };
 
 const navGroups = [
@@ -90,18 +90,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="shell">
           <aside className="sidebar">
             <div className="brand">
-              <div className="brand-mark">R</div>
+              <div className="brand-mark">EY</div>
               <div>
-                <span>Remediation Twin</span>
-                <small>Attack-path operating system</small>
+                <span>EY Remediation Twin</span>
+                <small>Attack-path command center</small>
               </div>
             </div>
             <div className="side-card">
               <div>
                 <Shield size={16} />
-                <strong>Production Control</strong>
+                <strong>EY Control Tower</strong>
               </div>
-              <p>Tenant guarded, simulation first, evidence required.</p>
+              <p>Tenant guarded, simulation first, evidence always ready.</p>
             </div>
             <nav className="nav">
               {navGroups.map((group) => (

@@ -97,7 +97,7 @@ export function AttackPathGraphViews({ paths }: { paths: Path[] }) {
 }
 
 function GraphNode({ node, compact = false }: { node: GraphNodeModel; compact?: boolean }) {
-  const border = node.kind === "target" ? "#b42318" : node.kind === "finding" ? "#b54708" : node.kind === "breaker" ? "#067647" : "#0f766e";
+  const border = node.kind === "target" ? "#b42318" : node.kind === "finding" ? "#9a6b00" : node.kind === "breaker" ? "#067647" : "#ffe600";
   return (
     <div style={{ ...styles.node, ...(compact ? styles.compactNode : {}), borderLeftColor: border }}>
       <small style={styles.nodeKind}>{node.kind}</small>
@@ -132,20 +132,20 @@ function buildEdges(paths: Path[], nodes: Array<{ id: string; label: string }>) 
 
 const styles: Record<string, CSSProperties> = {
   board: { display: "grid", gridTemplateColumns: "minmax(180px,.8fr) minmax(360px,1.5fr) minmax(220px,1fr)", gap: 14 },
-  column: { display: "grid", gap: 10, alignContent: "start", minHeight: 220, border: "1px solid #d9e1ea", borderRadius: 8, padding: 12, background: "#f8fafc" },
-  columnTitle: { color: "#64748b", fontSize: 12, fontWeight: 700, textTransform: "uppercase" },
-  node: { display: "grid", gap: 5, minHeight: 86, border: "1px solid #cbd5e1", borderLeft: "5px solid #0f766e", borderRadius: 8, padding: 10, background: "#fff" },
+  column: { display: "grid", gap: 10, alignContent: "start", minHeight: 220, border: "1px solid #d9d9cf", borderRadius: 8, padding: 12, background: "#f3f3ea" },
+  columnTitle: { color: "#5f6670", fontSize: 12, fontWeight: 700, textTransform: "uppercase" },
+  node: { display: "grid", gap: 5, minHeight: 86, border: "1px solid #d9d9cf", borderLeft: "5px solid #ffe600", borderRadius: 8, padding: 10, background: "#fff" },
   compactNode: { minWidth: 190, maxWidth: 240, minHeight: 104 },
-  nodeKind: { color: "#64748b", fontSize: 11, fontWeight: 700, textTransform: "uppercase" },
+  nodeKind: { color: "#5f6670", fontSize: 11, fontWeight: 700, textTransform: "uppercase" },
   nodeLabel: { fontSize: 13, lineHeight: 1.25, overflowWrap: "anywhere" },
-  muted: { color: "#64748b", fontSize: 12 },
-  edge: { display: "grid", gridTemplateColumns: "minmax(120px,1fr) auto minmax(120px,1fr)", gap: 10, alignItems: "center", border: "1px solid #d9e1ea", borderRadius: 8, padding: 10, background: "#fff" },
-  edgePill: { borderRadius: 999, padding: "5px 10px", background: "#e0f2fe", color: "#075985", fontSize: 12, fontWeight: 700, textAlign: "center" },
-  breakerPill: { borderRadius: 999, padding: "5px 10px", background: "#dcfce7", color: "#166534", fontSize: 12, fontWeight: 700, textAlign: "center" },
+  muted: { color: "#5f6670", fontSize: 12 },
+  edge: { display: "grid", gridTemplateColumns: "minmax(120px,1fr) auto minmax(120px,1fr)", gap: 10, alignItems: "center", border: "1px solid #d9d9cf", borderRadius: 8, padding: 10, background: "#fff" },
+  edgePill: { borderRadius: 999, padding: "5px 10px", background: "#fff7b8", color: "#554900", fontSize: 12, fontWeight: 700, textAlign: "center" },
+  breakerPill: { borderRadius: 999, padding: "5px 10px", background: "#ecece4", color: "#2e2e38", fontSize: 12, fontWeight: 700, textAlign: "center" },
   chainGrid: { display: "grid", gap: 14 },
-  chainCard: { border: "1px solid #d9e1ea", borderRadius: 8, padding: 14, background: "#fff" },
+  chainCard: { border: "1px solid #d9d9cf", borderRadius: 8, padding: 14, background: "#fff" },
   chainHead: { display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 12 },
   rail: { display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 },
   chainStep: { display: "flex", alignItems: "center", gap: 10, flex: "0 0 auto" },
-  arrow: { borderRadius: 999, padding: "5px 10px", background: "#dcfce7", color: "#166534", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }
+  arrow: { borderRadius: 999, padding: "5px 10px", background: "#fff7b8", color: "#554900", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }
 };

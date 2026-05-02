@@ -1,12 +1,12 @@
-# Product Requirements Document: Remediation Twin
+# Product Requirements Document: EY Remediation Twin
 
 ## Product Summary
 
-**Product name:** Remediation Twin
+**Product name:** EY Remediation Twin
 
 **Category:** Enterprise remediation operating system
 
-**Description:** Remediation Twin ingests security and compliance findings, maps them to enterprise assets, prioritizes business risk, simulates remediation before execution, orchestrates approvals and campaigns, and produces audit-grade evidence.
+**Description:** EY Remediation Twin ingests security and compliance findings, maps them to enterprise assets, prioritizes business risk, simulates remediation before execution, orchestrates approvals and campaigns, and presents the workflow through an EY-inspired executive command center with audit-grade evidence.
 
 ## Problem
 

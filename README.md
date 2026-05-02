@@ -1,6 +1,6 @@
-# Remediation Twin
+# EY Remediation Twin
 
-Remediation Twin is an enterprise remediation simulation and orchestration platform. It turns security findings from scanners, cloud tools, code security, IAM systems, and compliance sources into prioritized remediation work that can be simulated, approved, executed in dry-run, tracked through campaigns, and sealed with audit-grade evidence.
+EY Remediation Twin is an enterprise remediation simulation and orchestration platform with an EY-inspired command center experience. It turns security findings from scanners, cloud tools, code security, IAM systems, and compliance sources into prioritized remediation work that can be simulated, approved, executed in dry-run, tracked through campaigns, and sealed with audit-grade evidence.
 
 The product is designed for enterprises that are overwhelmed by remediation volume and need a governed way to answer:
 
@@ -13,7 +13,7 @@ The product is designed for enterprises that are overwhelmed by remediation volu
 
 ## What It Does
 
-Remediation Twin provides a full remediation operating loop:
+EY Remediation Twin provides a full remediation operating loop:
 
 1. Ingest findings through JSON, CSV, mock ingestion, and connector-run contracts.
 2. Normalize, deduplicate, and correlate source findings.

@@ -1,19 +1,20 @@
 :root {
-  --bg: #f4f7fb;
+  --bg: #f7f7f2;
   --panel: #ffffff;
-  --panel-2: #eef4f8;
-  --text: #111827;
-  --muted: #627084;
-  --line: #d8e1ea;
-  --brand: #0d7c75;
-  --brand-2: #185a72;
+  --panel-2: #f2f2eb;
+  --text: #1f2428;
+  --muted: #5f6670;
+  --line: #d9d9cf;
+  --brand: #ffe600;
+  --brand-2: #2e2e38;
+  --brand-3: #747480;
   --danger: #b42318;
-  --warn: #b54708;
+  --warn: #9a6b00;
   --ok: #067647;
-  --ink: #0d1726;
-  --ink-2: #152235;
-  --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
-  --soft-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 12px 32px rgba(15, 23, 42, 0.06);
+  --ink: #1a1a24;
+  --ink-2: #2e2e38;
+  --shadow: 0 18px 50px rgba(46, 46, 56, 0.1);
+  --soft-shadow: 0 1px 2px rgba(46, 46, 56, 0.06), 0 12px 32px rgba(46, 46, 56, 0.08);
 }
 
 * {
@@ -25,7 +26,7 @@ body {
   margin: 0;
   min-height: 100%;
   background:
-    linear-gradient(180deg, rgba(13, 124, 117, 0.06), transparent 260px),
+    linear-gradient(180deg, rgba(255, 230, 0, 0.16), transparent 280px),
     var(--bg);
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -50,9 +51,11 @@ textarea {
 }
 
 .sidebar {
-  background: linear-gradient(180deg, var(--ink), var(--ink-2));
-  border-right: 1px solid #243247;
-  color: #dfe8f3;
+  background:
+    linear-gradient(135deg, rgba(255, 230, 0, 0.16) 0 18%, transparent 18% 100%),
+    linear-gradient(180deg, var(--ink), var(--ink-2));
+  border-right: 1px solid #3d3d49;
+  color: #f5f5ef;
   padding: 20px 16px;
   position: sticky;
   top: 0;
@@ -72,7 +75,7 @@ textarea {
 .brand small {
   display: block;
   margin-top: 2px;
-  color: #9fb0c5;
+  color: #c7c7bd;
   font-size: 12px;
   font-weight: 600;
 }
@@ -83,17 +86,18 @@ textarea {
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: #2dd4bf;
-  color: #06231f;
-  box-shadow: 0 10px 25px rgba(45, 212, 191, 0.26);
+  background: var(--brand);
+  color: #1a1a24;
+  box-shadow: 0 12px 28px rgba(255, 230, 0, 0.26);
+  font-weight: 900;
 }
 
 .side-card {
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  border: 1px solid rgba(255, 230, 0, 0.22);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .side-card div {
@@ -104,7 +108,7 @@ textarea {
 
 .side-card p {
   margin: 8px 0 0;
-  color: #aab8ca;
+  color: #d6d6cc;
   font-size: 12px;
   line-height: 1.45;
 }
@@ -121,7 +125,7 @@ textarea {
 
 .nav-group > span {
   padding: 0 10px 4px;
-  color: #8291a7;
+  color: #b7b7ad;
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -133,13 +137,13 @@ textarea {
   align-items: center;
   padding: 9px 10px;
   border-radius: 8px;
-  color: #c5d1df;
+  color: #e1e1d8;
   font-size: 14px;
   font-weight: 650;
 }
 
 .nav a:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 230, 0, 0.14);
   color: #ffffff;
 }
 
@@ -188,7 +192,7 @@ textarea {
   border-radius: 999px;
   padding: 0 11px;
   background: rgba(255, 255, 255, 0.82);
-  color: #334155;
+  color: #2e2e38;
   font-size: 12px;
   font-weight: 800;
 }
@@ -208,12 +212,12 @@ textarea {
   gap: 18px;
   align-items: flex-start;
   margin-bottom: 22px;
-  border-bottom: 1px solid rgba(216, 225, 234, 0.9);
+  border-bottom: 1px solid rgba(217, 217, 207, 0.95);
   padding-bottom: 18px;
 }
 
 .eyebrow {
-  color: var(--brand-2);
+  color: #6f5f00;
   font-weight: 700;
   font-size: 12px;
   text-transform: uppercase;
@@ -224,7 +228,7 @@ h1 {
   font-size: 34px;
   line-height: 1.15;
   margin: 6px 0;
-  color: #0f172a;
+  color: #1a1a24;
 }
 
 h2 {
@@ -274,7 +278,7 @@ p {
   position: absolute;
   inset: 0 auto 0 0;
   width: 4px;
-  background: linear-gradient(180deg, var(--brand), #38bdf8);
+  background: linear-gradient(180deg, var(--brand), #2e2e38);
 }
 
 .metric span {
@@ -284,7 +288,7 @@ p {
 
 .metric strong {
   font-size: 30px;
-  color: #0f172a;
+  color: #1a1a24;
 }
 
 .table {
@@ -301,15 +305,15 @@ p {
 }
 
 .table th {
-  color: #475569;
-  background: #f8fafc;
+  color: #4b4b55;
+  background: #f3f3ea;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0;
 }
 
 .table tr:hover td {
-  background: #fbfdff;
+  background: #fffde8;
 }
 
 .badge {
@@ -319,7 +323,7 @@ p {
   border: 1px solid var(--line);
   padding: 4px 8px;
   font-size: 12px;
-  color: #334155;
+  color: #2e2e38;
   background: #fff;
 }
 
@@ -351,7 +355,7 @@ p {
 .button {
   border: 1px solid var(--line);
   background: #fff;
-  color: #17202a;
+  color: #1a1a24;
   border-radius: 8px;
   padding: 9px 12px;
   cursor: pointer;
@@ -364,7 +368,7 @@ p {
 
 .button.primary {
   background: var(--brand);
-  color: #fff;
+  color: #1a1a24;
   border-color: var(--brand);
 }
 
@@ -473,7 +477,7 @@ p {
   border-radius: 8px;
   padding: 14px;
   background: var(--panel-2);
-  color: #334155;
+  color: #2e2e38;
   font-weight: 700;
   overflow-wrap: anywhere;
 }
@@ -507,7 +511,7 @@ p {
   border: 0;
   border-radius: 8px;
   background: var(--brand);
-  color: #ffffff;
+  color: #1a1a24;
   padding: 10px 14px;
   font-weight: 800;
   text-decoration: none;
@@ -530,7 +534,7 @@ p {
   border-radius: 8px;
   padding: 16px;
   color: var(--muted);
-  background: #f8fafc;
+  background: #f3f3ea;
   text-align: center;
 }
 
@@ -543,8 +547,8 @@ p {
   border-radius: 8px;
   padding: 12px;
   background:
-    linear-gradient(180deg, rgba(13, 124, 117, 0.05), transparent),
-    #f8fafc;
+    linear-gradient(180deg, rgba(255, 230, 0, 0.1), transparent),
+    #f3f3ea;
 }
 
 .graph-column > span,
@@ -623,8 +627,8 @@ p {
   min-height: 30px;
   border-radius: 999px;
   padding: 4px 10px;
-  background: #e0f2fe;
-  color: #075985;
+  background: #fff7b8;
+  color: #554900;
   font-size: 12px;
   font-weight: 700;
   text-align: center;
@@ -632,8 +636,8 @@ p {
 
 .graph-link.breaker span,
 .chain-arrow {
-  background: #dcfce7;
-  color: #166534;
+  background: #ecece4;
+  color: #2e2e38;
 }
 
 .chain-grid {
@@ -646,7 +650,7 @@ p {
   border-radius: 8px;
   padding: 14px;
   background:
-    linear-gradient(180deg, rgba(248, 250, 252, 0.9), #ffffff);
+    linear-gradient(180deg, rgba(255, 252, 220, 0.9), #ffffff);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
 }
 
