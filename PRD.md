@@ -65,6 +65,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Final production completion center
 - Production operations control room
 - Once-and-for-all enterprise readiness control catalog across all enterprise domains
+- Production expansion modules for onboarding, marketplace, data quality, validation, economics, drift, policy builder, plugin SDK, deployment, security review, executive reporting, demo separation, E2E testing, and data residency
 
 ## Enterprise Maturity Requirements
 
@@ -223,6 +224,7 @@ The product must provide the final operational controls required to run a seriou
 - `/agentic`
 - `/final-production`
 - `/production-ops`
+- `/production-expansion`
 - `/enterprise-maturity`
 - `/enterprise-readiness`
 - `/governance`

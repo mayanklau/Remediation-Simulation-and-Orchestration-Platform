@@ -59,6 +59,7 @@ export const routePermissions: RoutePermission[] = [
   { pattern: /^\/api\/pilot-control-plane$/, methods: ["GET", "POST"], permission: "report:read" },
   { pattern: /^\/api\/operating-system$/, methods: ["GET", "POST"], permission: "report:read" },
   { pattern: /^\/api\/final-production$/, methods: ["GET", "POST"], permission: "report:read" },
+  { pattern: /^\/api\/production-expansion$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/copilot$/, methods: ["POST"], permission: "automation:run" }
 ];
 

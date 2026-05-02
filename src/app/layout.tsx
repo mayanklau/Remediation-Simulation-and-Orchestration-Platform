@@ -62,7 +62,8 @@ const navGroups = [
       { href: "/ingestion-jobs", label: "Ingestion Jobs", icon: ClipboardList },
       { href: "/reports", label: "Reports", icon: TrendingUp },
       { href: "/automation", label: "Automation", icon: SlidersHorizontal },
-      { href: "/production-ops", label: "Prod Ops", icon: ServerCog }
+      { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
+      { href: "/production-expansion", label: "Expansion", icon: Sparkles }
     ]
   },
   {

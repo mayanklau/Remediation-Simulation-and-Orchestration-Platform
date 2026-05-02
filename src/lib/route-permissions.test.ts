@@ -11,6 +11,7 @@ describe("route permission contract", () => {
     expect(routePermissionFor("/api/integrations", "GET")).toBe("connector:read");
     expect(routePermissionFor("/api/integrations", "POST")).toBe("connector:run");
     expect(routePermissionFor("/api/enterprise-readiness", "GET")).toBe("report:read");
+    expect(routePermissionFor("/api/production-expansion", "GET")).toBe("report:read");
     expect(routePermissionFor("/api/observability", "GET")).toBe("audit:read");
   });
 
