@@ -19,7 +19,10 @@ import {
   ClipboardList,
   Columns3,
   Rocket,
-  ServerCog
+  ServerCog,
+  Search,
+  Shield,
+  Sparkles
 } from "lucide-react";
 import "./globals.css";
 
@@ -28,36 +31,56 @@ export const metadata: Metadata = {
   description: "Enterprise remediation operating system"
 };
 
-const nav = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/findings", label: "Findings", icon: ShieldAlert },
-  { href: "/assets", label: "Assets", icon: Boxes },
-  { href: "/asset-graph", label: "Asset Graph", icon: Network },
-  { href: "/attack-paths", label: "Attack Paths", icon: Network },
-  { href: "/operating-system", label: "Control Plane", icon: Network },
-  { href: "/remediation", label: "Remediation Queue", icon: GitPullRequestArrow },
-  { href: "/simulations", label: "Simulations", icon: Network },
-  { href: "/workflows", label: "Approvals", icon: CheckCircle2 },
-  { href: "/evidence", label: "Evidence", icon: FileCheck },
-  { href: "/integrations", label: "Integrations", icon: Activity },
-  { href: "/connectors", label: "Connectors", icon: Cable },
-  { href: "/ingestion-jobs", label: "Ingestion Jobs", icon: ClipboardList },
-  { href: "/reports", label: "Reports", icon: TrendingUp },
-  { href: "/automation", label: "Automation", icon: SlidersHorizontal },
-  { href: "/policies", label: "Policies", icon: ClipboardCheck },
-  { href: "/exceptions", label: "Exceptions", icon: ScrollText },
-  { href: "/campaigns", label: "Campaigns", icon: Bot },
-  { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
-  { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
-  { href: "/virtual-patching", label: "Virtual Patch", icon: ShieldCheck },
-  { href: "/agentic", label: "Agentic", icon: Bot },
-  { href: "/final-production", label: "Final Prod", icon: ShieldCheck },
-  { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
-  { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
-  { href: "/governance", label: "Governance", icon: ShieldCheck },
-  { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
-  { href: "/audit", label: "Audit", icon: ScrollText },
-  { href: "/settings", label: "Settings", icon: Settings }
+const navGroups = [
+  {
+    label: "Command",
+    items: [
+      { href: "/", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/findings", label: "Findings", icon: ShieldAlert },
+      { href: "/assets", label: "Assets", icon: Boxes },
+      { href: "/asset-graph", label: "Asset Graph", icon: Network },
+      { href: "/attack-paths", label: "Attack Paths", icon: Network },
+      { href: "/operating-system", label: "Control Plane", icon: Network }
+    ]
+  },
+  {
+    label: "Remediate",
+    items: [
+      { href: "/remediation", label: "Remediation Queue", icon: GitPullRequestArrow },
+      { href: "/simulations", label: "Simulations", icon: Network },
+      { href: "/workflows", label: "Approvals", icon: CheckCircle2 },
+      { href: "/evidence", label: "Evidence", icon: FileCheck },
+      { href: "/virtual-patching", label: "Virtual Patch", icon: ShieldCheck },
+      { href: "/agentic", label: "Agentic", icon: Bot }
+    ]
+  },
+  {
+    label: "Operations",
+    items: [
+      { href: "/integrations", label: "Integrations", icon: Activity },
+      { href: "/connectors", label: "Connectors", icon: Cable },
+      { href: "/ingestion-jobs", label: "Ingestion Jobs", icon: ClipboardList },
+      { href: "/reports", label: "Reports", icon: TrendingUp },
+      { href: "/automation", label: "Automation", icon: SlidersHorizontal },
+      { href: "/production-ops", label: "Prod Ops", icon: ServerCog }
+    ]
+  },
+  {
+    label: "Govern",
+    items: [
+      { href: "/policies", label: "Policies", icon: ClipboardCheck },
+      { href: "/exceptions", label: "Exceptions", icon: ScrollText },
+      { href: "/campaigns", label: "Campaigns", icon: Bot },
+      { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
+      { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
+      { href: "/final-production", label: "Final Prod", icon: ShieldCheck },
+      { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
+      { href: "/governance", label: "Governance", icon: ShieldCheck },
+      { href: "/enterprise", label: "Enterprise", icon: ShieldCheck },
+      { href: "/audit", label: "Audit", icon: ScrollText },
+      { href: "/settings", label: "Settings", icon: Settings }
+    ]
+  }
 ];
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -68,21 +91,48 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <aside className="sidebar">
             <div className="brand">
               <div className="brand-mark">R</div>
-              <span>Remediation Twin</span>
+              <div>
+                <span>Remediation Twin</span>
+                <small>Attack-path operating system</small>
+              </div>
+            </div>
+            <div className="side-card">
+              <div>
+                <Shield size={16} />
+                <strong>Production Control</strong>
+              </div>
+              <p>Tenant guarded, simulation first, evidence required.</p>
             </div>
             <nav className="nav">
-              {nav.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <a key={item.href} href={item.href}>
-                    <Icon size={18} />
-                    {item.label}
-                  </a>
-                );
-              })}
+              {navGroups.map((group) => (
+                <div className="nav-group" key={group.label}>
+                  <span>{group.label}</span>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <a key={item.href} href={item.href}>
+                        <Icon size={18} />
+                        {item.label}
+                      </a>
+                    );
+                  })}
+                </div>
+              ))}
             </nav>
           </aside>
-          <main className="main">{children}</main>
+          <main className="main">
+            <div className="topbar">
+              <div className="search-box">
+                <Search size={17} />
+                <span>Search findings, assets, paths, controls</span>
+              </div>
+              <div className="topbar-actions">
+                <span className="health-dot">Live</span>
+                <span className="pill"><Sparkles size={14} /> Agent ready</span>
+              </div>
+            </div>
+            {children}
+          </main>
         </div>
       </body>
     </html>

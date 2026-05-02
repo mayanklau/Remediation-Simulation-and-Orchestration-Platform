@@ -1,16 +1,19 @@
 :root {
-  --bg: #f7f8fa;
+  --bg: #f4f7fb;
   --panel: #ffffff;
-  --panel-2: #f0f4f8;
-  --text: #17202a;
-  --muted: #64748b;
-  --line: #d9e1ea;
-  --brand: #0f766e;
-  --brand-2: #155e75;
+  --panel-2: #eef4f8;
+  --text: #111827;
+  --muted: #627084;
+  --line: #d8e1ea;
+  --brand: #0d7c75;
+  --brand-2: #185a72;
   --danger: #b42318;
   --warn: #b54708;
   --ok: #067647;
-  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --ink: #0d1726;
+  --ink-2: #152235;
+  --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  --soft-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 12px 32px rgba(15, 23, 42, 0.06);
 }
 
 * {
@@ -21,9 +24,11 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(13, 124, 117, 0.06), transparent 260px),
+    var(--bg);
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 a {
@@ -40,17 +45,19 @@ textarea {
 
 .shell {
   display: grid;
-  grid-template-columns: 252px 1fr;
+  grid-template-columns: 286px 1fr;
   min-height: 100vh;
 }
 
 .sidebar {
-  background: #ffffff;
-  border-right: 1px solid var(--line);
-  padding: 22px 16px;
+  background: linear-gradient(180deg, var(--ink), var(--ink-2));
+  border-right: 1px solid #243247;
+  color: #dfe8f3;
+  padding: 20px 16px;
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow: auto;
 }
 
 .brand {
@@ -59,40 +66,140 @@ textarea {
   gap: 10px;
   font-weight: 700;
   font-size: 18px;
-  margin-bottom: 28px;
+  margin-bottom: 18px;
+}
+
+.brand small {
+  display: block;
+  margin-top: 2px;
+  color: #9fb0c5;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .brand-mark {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: var(--brand);
-  color: #fff;
+  background: #2dd4bf;
+  color: #06231f;
+  box-shadow: 0 10px 25px rgba(45, 212, 191, 0.26);
+}
+
+.side-card {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.side-card div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.side-card p {
+  margin: 8px 0 0;
+  color: #aab8ca;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .nav {
   display: grid;
-  gap: 6px;
+  gap: 14px;
+}
+
+.nav-group {
+  display: grid;
+  gap: 4px;
+}
+
+.nav-group > span {
+  padding: 0 10px 4px;
+  color: #8291a7;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .nav a {
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 9px 10px;
   border-radius: 8px;
-  color: #334155;
+  color: #c5d1df;
+  font-size: 14px;
+  font-weight: 650;
 }
 
 .nav a:hover {
-  background: var(--panel-2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .main {
   min-width: 0;
-  padding: 28px;
+  padding: 24px 28px 36px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.search-box {
+  min-height: 42px;
+  width: min(620px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  color: var(--muted);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.health-dot,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 11px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #334155;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.health-dot::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--ok);
+  box-shadow: 0 0 0 4px rgba(6, 118, 71, 0.12);
 }
 
 .page-head {
@@ -100,7 +207,9 @@ textarea {
   justify-content: space-between;
   gap: 18px;
   align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(216, 225, 234, 0.9);
+  padding-bottom: 18px;
 }
 
 .eyebrow {
@@ -112,9 +221,10 @@ textarea {
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 34px;
   line-height: 1.15;
   margin: 6px 0;
+  color: #0f172a;
 }
 
 h2 {
@@ -149,12 +259,22 @@ p {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 18px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--soft-shadow);
 }
 
 .metric {
   display: grid;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--brand), #38bdf8);
 }
 
 .metric span {
@@ -163,7 +283,8 @@ p {
 }
 
 .metric strong {
-  font-size: 28px;
+  font-size: 30px;
+  color: #0f172a;
 }
 
 .table {
@@ -175,15 +296,20 @@ p {
 .table td {
   text-align: left;
   border-bottom: 1px solid var(--line);
-  padding: 12px 10px;
+  padding: 13px 10px;
   vertical-align: top;
 }
 
 .table th {
-  color: var(--muted);
+  color: #475569;
+  background: #f8fafc;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0;
+}
+
+.table tr:hover td {
+  background: #fbfdff;
 }
 
 .badge {
@@ -232,6 +358,8 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-weight: 750;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .button.primary {
@@ -414,7 +542,9 @@ p {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
-  background: #f8fafc;
+  background:
+    linear-gradient(180deg, rgba(13, 124, 117, 0.05), transparent),
+    #f8fafc;
 }
 
 .graph-column > span,
@@ -434,6 +564,7 @@ p {
   border-radius: 8px;
   padding: 10px;
   background: #ffffff;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
 }
 
 .graph-node small {
@@ -481,6 +612,7 @@ p {
   border-radius: 8px;
   padding: 10px;
   background: #ffffff;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
 }
 
 .graph-link span,
@@ -513,7 +645,9 @@ p {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
-  background: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.9), #ffffff);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
 }
 
 .chain-head {
@@ -558,6 +692,11 @@ p {
   .sidebar {
     position: relative;
     height: auto;
+  }
+
+  .topbar,
+  .page-head {
+    display: grid;
   }
 
   .grid.cols-4,
