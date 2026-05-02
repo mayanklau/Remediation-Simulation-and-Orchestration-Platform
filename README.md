@@ -61,6 +61,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - React Flow graph-library UI for asset dependencies, attack paths, exploit preconditions, crown jewels, and path breaker controls with pan, zoom, minimap, risk filtering, inspector, JSON export, empty states, and drill-down views
 - Once-and-for-all enterprise readiness catalog covering identity, tenancy, secrets, connectors, ingestion, vulnerability analytics, simulation, orchestration, AI governance, evidence, reporting, platform architecture, security, observability, testing, DevOps, product experience, and commercial packaging
 - Production expansion layer for admin onboarding, connector marketplace, data quality, attack-path validation, remediation economics, control drift, post-remediation validation, policy builder, plugin SDK, deployment hardening, security review, executive narratives, demo separation, E2E coverage, and data residency
+- Production effectiveness layer for scheduler lanes, retry/backoff/dead-letter contracts, data-quality gates, post-remediation validation, residual-risk evidence, observability signals, and operating rules that separate repo-ready capability from customer-specific go-live wiring
 - Go-live control center with production environment contract, launch sequence, rollback sequence, identity/secrets/connectors/data/workers/observability/security/release/customer acceptance checks
 
 ## Key Modules
@@ -88,6 +89,7 @@ EY Remediation Twin provides a full remediation operating loop:
 | Final Production | Final deployability and production closure controls. |
 | Production Ops | Runtime workers, SSO/session contracts, telemetry, evidence sealing, and live connector dry-runs. |
 | Production Expansion | Remaining enterprise product modules with APIs, workflows, evidence, gates, owners, and deployment posture. |
+| Production Effectiveness | Reliability, data-quality, validation, dead-letter, observability, and residual-risk controls for production operations. |
 | Go-Live Control Center | Final launch runbook, required production values, verification gates, and rollback sequence. |
 
 ## Attack Path Analytics

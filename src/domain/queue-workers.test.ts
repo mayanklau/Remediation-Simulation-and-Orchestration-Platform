@@ -6,5 +6,7 @@ describe("queue worker contracts", () => {
     const job = createQueueJob({ tenantId: "tenant-test", lane: "simulation", payload: { actionId: "a1" }, priority: "high" });
     expect(job.correlationId).toBeTruthy();
     expect(workerPlanForLane(job.lane)).toContain("compute blast radius");
+    expect(workerPlanForLane("post_remediation_validation")).toContain("compare before and after risk");
+    expect(workerPlanForLane("data_quality_scan")).toContain("score source freshness");
   });
 });

@@ -63,7 +63,8 @@ const navGroups = [
       { href: "/reports", label: "Reports", icon: TrendingUp },
       { href: "/automation", label: "Automation", icon: SlidersHorizontal },
       { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
-      { href: "/production-expansion", label: "Expansion", icon: Sparkles }
+      { href: "/production-expansion", label: "Expansion", icon: Sparkles },
+      { href: "/production-effectiveness", label: "Effectiveness", icon: ShieldCheck }
     ]
   },
   {

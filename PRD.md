@@ -41,7 +41,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Multi-tenant backend and tenant-scoped APIs
 - SSO/OIDC readiness, signed sessions, tenant isolation checks, and RBAC enforcement helper contracts
 - Service/repository/DTO structure for route logic, shared validation, and contract-driven APIs
-- Queue-worker contracts for ingestion, simulation, connector sync, evidence generation, and report snapshots
+- Queue-worker contracts for ingestion, simulation, connector sync, evidence generation, report snapshots, post-remediation validation, and data-quality scans
 - Environment separation and strict runtime configuration validation for local, dev, staging, and production
 - CI/CD quality gates covering typecheck, tests, build, migration validation, dependency audit, and container-scan readiness
 - JSON and CSV finding ingestion
@@ -66,6 +66,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - Production operations control room
 - Once-and-for-all enterprise readiness control catalog across all enterprise domains
 - Production expansion modules for onboarding, marketplace, data quality, validation, economics, drift, policy builder, plugin SDK, deployment, security review, executive reporting, demo separation, E2E testing, and data residency
+- Production effectiveness controls for retry/backoff/dead-letter handling, idempotency, source freshness, owner coverage, evidence completeness, post-remediation validation, residual-risk evidence, and observability alerts
 - Go-live control center covering production values, launch, rollback, and customer acceptance
 
 ## Enterprise Maturity Requirements
@@ -226,6 +227,7 @@ The product must provide the final operational controls required to run a seriou
 - `/final-production`
 - `/production-ops`
 - `/production-expansion`
+- `/production-effectiveness`
 - `/go-live`
 - `/enterprise-maturity`
 - `/enterprise-readiness`
