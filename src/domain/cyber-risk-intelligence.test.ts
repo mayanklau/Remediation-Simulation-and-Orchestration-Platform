@@ -15,5 +15,11 @@ describe("cyber risk intelligence model", () => {
     expect(model.governanceMatrix.map((row) => row.id)).toContain("regulatory_mapping");
     expect(model.governanceMatrix.map((row) => row.id)).toContain("identity_cloud_data_risk");
     expect(model.summary.capabilities).toBeGreaterThanOrEqual(14);
+    expect(model.summary.certificationTracks).toBeGreaterThanOrEqual(6);
+    expect(model.summary.mitreMappedHops).toBeGreaterThanOrEqual(6);
+    expect(model.summary.controlValidationMethods).toBeGreaterThanOrEqual(7);
+    expect(model.subjectMatterMaturityPack.scannerCertification.map((item) => item.id)).toContain("tenable");
+    expect(model.subjectMatterMaturityPack.exploitabilityConfidenceModel.map((item) => item.label)).toContain("proven");
+    expect(model.subjectMatterMaturityPack.pilotAcceptancePack.length).toBeGreaterThanOrEqual(5);
   });
 });

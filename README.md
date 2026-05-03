@@ -440,5 +440,6 @@ npm run db:deploy
 - [API Reference](docs/API.md)
 - [Architecture Notes](docs/ARCHITECTURE.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
+- [Subject Matter Maturity Pack](docs/SUBJECT_MATTER_MATURITY_PACK.md)
 - [Security Model](docs/SECURITY.md)
 - [Runbook](docs/RUNBOOK.md)

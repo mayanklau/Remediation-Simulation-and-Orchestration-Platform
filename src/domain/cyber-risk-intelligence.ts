@@ -106,6 +106,7 @@ export function buildCyberRiskIntelligenceModel() {
   const scoredItems = [...capabilities, ...economics, ...scenarioPacks, ...governanceMatrix];
   const implemented = scoredItems.filter((item) => item.status === "implemented").length;
   const total = scoredItems.length;
+  const subjectMatterMaturityPack = buildSubjectMatterMaturityPack();
 
   return {
     summary: {
@@ -114,6 +115,9 @@ export function buildCyberRiskIntelligenceModel() {
       executiveNarratives: narratives.length,
       scenarioPacks: scenarioPacks.length,
       governanceControls: governanceMatrix.length,
+      certificationTracks: subjectMatterMaturityPack.scannerCertification.length,
+      mitreMappedHops: subjectMatterMaturityPack.mitreAttackDepth.length,
+      controlValidationMethods: subjectMatterMaturityPack.controlEffectivenessLibrary.length,
       implemented,
       readyToWire: scoredItems.filter((item) => item.status === "ready_to_wire").length,
       externalRequired: scoredItems.filter((item) => item.status === "external_required").length,
@@ -125,11 +129,69 @@ export function buildCyberRiskIntelligenceModel() {
     narratives,
     scenarioPacks,
     governanceMatrix,
+    subjectMatterMaturityPack,
     operatingRules: [
       "Severity alone never drives priority when exploitability, exposure, business service, and path position disagree.",
       "Every accepted risk needs owner, expiry, compensating control, residual risk, and approval evidence.",
       "Every closed remediation must be eligible for continuous validation and drift detection.",
       "Every executive risk statement must show confidence, assumptions, and before/after residual risk."
+    ]
+  };
+}
+
+function buildSubjectMatterMaturityPack() {
+  return {
+    scannerCertification: [
+      certification("tenable", "Tenable VM/Nessus", ["plugin_id", "cve", "cvss", "vpr", "asset_uuid", "port", "protocol"], "CVE and plugin evidence mapped to network/app exposure, exploitability, and affected asset identity."),
+      certification("qualys", "Qualys VMDR", ["qid", "cve_id", "threat", "impact", "solution", "dns", "netbios", "tracking_method"], "QID evidence normalized into vulnerability, asset, remediation, and exception-ready evidence fields."),
+      certification("wiz", "Wiz", ["issue_id", "toxic_combination", "cloud_resource", "subscription", "attack_path", "severity"], "Cloud finding and toxic-combination evidence mapped to cloud, IAM, data, and Kubernetes graph edges."),
+      certification("prisma_cloud", "Prisma Cloud", ["policy_id", "resource_id", "account", "cloud_type", "compliance_standard"], "Cloud and Kubernetes policy violations mapped to guardrail remediation and control drift validation."),
+      certification("snyk", "Snyk", ["issue_id", "package", "version", "fixed_in", "exploit_maturity", "project"], "Open-source/package findings mapped to app dependency paths, fix versions, and CI/CD control gates."),
+      certification("ghas", "GitHub Advanced Security", ["alert_number", "rule_id", "secret_type", "repository", "workflow"], "Code scanning and secret alerts mapped to CI/CD, secret-rotation, and production-deploy attack chains.")
+    ],
+    mitreAttackDepth: [
+      mitre("initial_access", "Initial Access", "T1190 Exploit Public-Facing Application", ["internet exposure", "reachable service", "exploitable finding"], "patch, WAF rule, segmentation"),
+      mitre("credential_access", "Credential Access", "T1552 Unsecured Credentials", ["secret finding", "token scope", "repo/build log exposure"], "secret rotation, secret scanning, runner isolation"),
+      mitre("privilege_escalation", "Privilege Escalation", "T1098 Account Manipulation", ["over-privileged role", "trust policy", "group membership"], "IAM deny, least privilege, JIT access"),
+      mitre("lateral_movement", "Lateral Movement", "T1021 Remote Services", ["network route", "service dependency", "identity reachability"], "segmentation, network policy, conditional access"),
+      mitre("exfiltration", "Exfiltration", "T1041 Exfiltration Over C2 Channel", ["sensitive data store", "egress path", "token privilege"], "egress control, DLP, database access policy"),
+      mitre("impact", "Impact", "T1486 Data Encrypted for Impact", ["backup access", "admin privilege", "ransomware signal"], "backup immutability, EDR isolation, privilege removal")
+    ],
+    exploitabilityConfidenceModel: [
+      confidence("proven", 95, "Observed exploit, reachable asset, validated preconditions, mapped business impact, and post-remediation validation plan."),
+      confidence("high_confidence", 80, "Exploit available, KEV/EPSS signal, internet or identity exposure, and strong asset mapping."),
+      confidence("inferred", 65, "Logical chain exists with partial evidence; requires reachability or credential validation before automation."),
+      confidence("scanner_only", 45, "Scanner finding exists but topology, privilege, or exposure evidence is incomplete."),
+      confidence("validation_missing", 25, "Risk cannot drive autonomous action until asset identity and control evidence are enriched.")
+    ],
+    businessImpactModel: [
+      impact("crown_jewel", "Regulated or revenue-critical system", ["service tier", "data class", "customer impact", "availability dependency"], "mandatory executive approval for residual risk"),
+      impact("production_service", "Customer-facing production workload", ["criticality", "SLO", "owner", "deployment window"], "CAB or service-owner approval for risky changes"),
+      impact("identity_control_plane", "IAM, CI/CD, or admin control path", ["standing privilege", "token scope", "blast radius"], "path breaker prioritized over isolated patch queue"),
+      impact("data_store", "Sensitive or regulated datastore", ["record volume", "encryption", "egress", "access path"], "exfiltration and compliance impact applied to risk"),
+      impact("shared_platform", "Shared runtime, cluster, image, or gateway", ["tenant reach", "dependency centrality", "rollback plan"], "wave-based remediation and rollback evidence required")
+    ],
+    controlEffectivenessLibrary: [
+      controlEffect("patch", "Remove vulnerable condition", ["version check", "rescan", "exploit precondition removed"], "release window"),
+      controlEffect("waf_rule", "Block public exploit payload or route", ["rule deployed", "request simulation", "false-positive review"], "hours"),
+      controlEffect("iam_deny", "Remove privilege edge", ["policy diff", "access simulation", "least privilege proof"], "hours"),
+      controlEffect("segmentation", "Remove reachability edge", ["network path test", "flow log review", "dependency exception"], "1-2 days"),
+      controlEffect("secret_rotation", "Invalidate credential edge", ["old token revoked", "new secret stored", "consumer restarted"], "hours"),
+      controlEffect("cloud_policy", "Prevent drift and unsafe cloud state", ["policy-as-code diff", "drift check", "cloud config validation"], "1-2 days"),
+      controlEffect("kubernetes_policy", "Block risky workload admission or runtime path", ["admission test", "RBAC review", "network policy test"], "release window")
+    ],
+    validationAndExceptionPack: [
+      "Every closure requires before state, applied control, validation result, residual risk, owner, timestamp, and correlation ID.",
+      "Every exception requires expiry, compensating control, business justification, risk owner, executive approver for crown jewels, and renewal workflow.",
+      "Every failed validation reopens the remediation action and updates the attack path with residual risk.",
+      "Every scanner-certified adapter has a sample export, mapping contract, data-quality checks, and customer acceptance evidence."
+    ],
+    pilotAcceptancePack: [
+      "Load customer scanner exports for at least two sources and reconcile asset identity with CMDB/cloud inventory.",
+      "Demonstrate five vulnerability chains across network, IAM, cloud, Kubernetes, and CI/CD/secrets.",
+      "Show pre-remediation and post-remediation path risk for patch, WAF, IAM deny, segmentation, and secret rotation.",
+      "Generate evidence pack for one completed remediation, one exception, one failed validation, and one executive report.",
+      "Agree success metrics: attack paths closed, risk reduced, backlog noise reduced, exception aging reduced, and validation pass rate."
     ]
   };
 }
@@ -148,4 +210,24 @@ function scenario(id: string, name: string, killChain: string[], decisionUse: st
 
 function governance(id: string, name: string, scope: string, rule: string, output: string, status: IntelligenceStatus): GovernanceMatrixRow {
   return { id, name, scope, rule, output, status };
+}
+
+function certification(id: string, source: string, requiredFields: string[], mapping: string) {
+  return { id, source, requiredFields, mapping, acceptance: "sample export, parser contract, normalized finding, asset match, and evidence trace" };
+}
+
+function mitre(id: string, stage: string, technique: string, preconditions: string[], breakerControls: string) {
+  return { id, stage, technique, preconditions, breakerControls };
+}
+
+function confidence(label: string, score: number, explanation: string) {
+  return { label, score, explanation };
+}
+
+function impact(id: string, assetClass: string, signals: string[], governance: string) {
+  return { id, assetClass, signals, governance };
+}
+
+function controlEffect(control: string, objective: string, validation: string[], timeToMitigate: string) {
+  return { control, objective, validation, timeToMitigate };
 }

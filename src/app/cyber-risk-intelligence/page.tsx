@@ -18,6 +18,12 @@ export default function CyberRiskIntelligencePage() {
         <div className="metric"><span>Score</span><strong>{model.summary.intelligenceScore}%</strong></div>
       </section>
       <div style={{ height: 18 }} />
+      <section className="grid cols-3">
+        <div className="metric"><span>Certified Sources</span><strong>{model.summary.certificationTracks}</strong></div>
+        <div className="metric"><span>MITRE Hops</span><strong>{model.summary.mitreMappedHops}</strong></div>
+        <div className="metric"><span>Control Methods</span><strong>{model.summary.controlValidationMethods}</strong></div>
+      </section>
+      <div style={{ height: 18 }} />
       <section className="grid cols-2">
         {model.capabilities.map((capability) => (
           <div className="panel" key={capability.id}>
@@ -38,6 +44,40 @@ export default function CyberRiskIntelligencePage() {
             </table>
           </div>
         ))}
+      </section>
+      <div style={{ height: 18 }} />
+      <section className="grid cols-2">
+        <div className="panel">
+          <h2>Scanner Certification Matrix</h2>
+          <table className="table">
+            <thead><tr><th>Source</th><th>Required Fields</th><th>Acceptance</th></tr></thead>
+            <tbody>{model.subjectMatterMaturityPack.scannerCertification.map((row) => <tr key={row.id}><td>{row.source}</td><td>{row.requiredFields.join(", ")}</td><td>{row.acceptance}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <div className="panel">
+          <h2>MITRE Attack-Path Depth</h2>
+          <table className="table">
+            <thead><tr><th>Stage</th><th>Technique</th><th>Breaker Controls</th></tr></thead>
+            <tbody>{model.subjectMatterMaturityPack.mitreAttackDepth.map((row) => <tr key={row.id}><td>{row.stage}</td><td>{row.technique}</td><td>{row.breakerControls}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </section>
+      <div style={{ height: 18 }} />
+      <section className="grid cols-2">
+        <div className="panel">
+          <h2>Exploitability Confidence</h2>
+          <table className="table">
+            <thead><tr><th>Label</th><th>Score</th><th>Explanation</th></tr></thead>
+            <tbody>{model.subjectMatterMaturityPack.exploitabilityConfidenceModel.map((row) => <tr key={row.label}><td>{row.label}</td><td>{row.score}%</td><td>{row.explanation}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <div className="panel">
+          <h2>Control Effectiveness Library</h2>
+          <table className="table">
+            <thead><tr><th>Control</th><th>Objective</th><th>Validation</th></tr></thead>
+            <tbody>{model.subjectMatterMaturityPack.controlEffectivenessLibrary.map((row) => <tr key={row.control}><td>{row.control}</td><td>{row.objective}</td><td>{row.validation.join(", ")}</td></tr>)}</tbody>
+          </table>
+        </div>
       </section>
       <div style={{ height: 18 }} />
       <section className="grid cols-2">
