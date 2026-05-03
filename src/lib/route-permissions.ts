@@ -62,6 +62,7 @@ export const routePermissions: RoutePermission[] = [
   { pattern: /^\/api\/final-production$/, methods: ["GET", "POST"], permission: "report:read" },
   { pattern: /^\/api\/production-expansion$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/production-effectiveness$/, methods: ["GET"], permission: "report:read" },
+  { pattern: /^\/api\/production-reality$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/go-live$/, methods: ["GET"], permission: "report:read" },
   { pattern: /^\/api\/copilot$/, methods: ["POST"], permission: "automation:run" }
 ];

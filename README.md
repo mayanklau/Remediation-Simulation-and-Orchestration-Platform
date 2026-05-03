@@ -93,6 +93,7 @@ EY Remediation Twin provides a full remediation operating loop:
 | Production Ops | Runtime workers, SSO/session contracts, telemetry, evidence sealing, and live connector dry-runs. |
 | Production Expansion | Remaining enterprise product modules with APIs, workflows, evidence, gates, owners, and deployment posture. |
 | Production Effectiveness | Reliability, data-quality, validation, dead-letter, observability, and residual-risk controls for production operations. |
+| Production Reality | Below-the-waterline runtime, network, storage, queue, observability, release, rollback, and customer-infrastructure controls. |
 | Go-Live Control Center | Final launch runbook, required production values, verification gates, and rollback sequence. |
 
 ## Attack Path Analytics
@@ -418,6 +419,8 @@ Required or recommended variables are documented in `.env.example`:
 ## Deployment
 
 For production, use a managed relational database, external secret manager, object storage for evidence, worker runtime, enterprise identity provider, telemetry collector, and alert routing.
+
+The `/production-reality` page and `/api/production-reality` endpoint make the remaining production gap explicit: container hardening, Kubernetes/load-balancer wiring, rate limits, queue backpressure, dead-letter replay, backup/restore, object-storage retention, telemetry/SLOs, progressive delivery, secret rotation, and rollback drills.
 
 Container deployment:
 
