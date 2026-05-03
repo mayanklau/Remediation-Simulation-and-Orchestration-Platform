@@ -82,6 +82,22 @@ export default function CyberRiskIntelligencePage() {
       <div style={{ height: 18 }} />
       <section className="grid cols-2">
         <div className="panel">
+          <h2>Business Impact Model</h2>
+          <table className="table">
+            <thead><tr><th>Class</th><th>Signals</th><th>Governance</th></tr></thead>
+            <tbody>{model.subjectMatterMaturityPack.businessImpactModel.map((row) => <tr key={row.id}><td>{row.assetClass}</td><td>{row.signals.join(", ")}</td><td>{row.governance}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <div className="panel">
+          <h2>Validation And Exception Pack</h2>
+          <div className="rule-list">
+            {model.subjectMatterMaturityPack.validationAndExceptionPack.map((rule) => <div className="rule-item" key={rule}>{rule}</div>)}
+          </div>
+        </div>
+      </section>
+      <div style={{ height: 18 }} />
+      <section className="grid cols-2">
+        <div className="panel">
           <h2>Adversary Scenario Packs</h2>
           <table className="table">
             <thead><tr><th>Scenario</th><th>Kill Chain</th><th>Controls</th><th>Status</th></tr></thead>
