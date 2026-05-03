@@ -47,6 +47,7 @@ The result is duplicated tickets, missed SLAs, production-risk anxiety, unclear 
 - JSON and CSV finding ingestion
 - Asset inventory and asset graph
 - Graph-native vulnerability chaining and attack-path analytics
+- Multi-path fan-out from each discovered vulnerability, including impact score on every graph point and explicit pre-remediation versus post-remediation risk per attack path
 - Advanced cyber-risk intelligence for exploit fusion, business-service impact, attack-path confidence, exposure management, adversary scenario simulation, risk appetite, control coverage, toxic-combination detection, kill-chain staging, regulatory mapping, security debt, dynamic SLAs, change-risk modeling, remediation strategy selection, control-effectiveness validation, threat-informed prioritization, crown-jewel governance, exception governance, campaign intelligence, continuous validation, scanner trust scoring, playbook marketplace, risk economics, and executive narratives
 - Deduplication and source correlation
 - Risk scoring, attack-path difficulty, before/after remediation risk, and remediation action generation

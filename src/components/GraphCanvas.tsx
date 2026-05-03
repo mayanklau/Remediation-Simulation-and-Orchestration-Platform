@@ -22,6 +22,10 @@ type GraphNode = {
   kind: string;
   group?: string;
   risk?: number;
+  impactScore?: number;
+  preRemediationRisk?: number;
+  postRemediationRisk?: number;
+  pathIds?: string[];
   maturity?: number;
   difficulty?: string;
   metadata?: Record<string, unknown>;
@@ -126,7 +130,8 @@ export function GraphCanvas({ title, description, nodes, edges, mode }: GraphCan
         {selected ? (
           <>
             <strong>{selected.label}</strong>
-            <span>{selected.kind.replace("_", " ")} / {selected.group ?? "ungrouped"} / {selected.risk ?? 0}% risk</span>
+            <span>{selected.kind.replace("_", " ")} / {selected.group ?? "ungrouped"} / impact {selected.impactScore ?? selected.risk ?? 0}</span>
+            <span>pre {selected.preRemediationRisk ?? selected.risk ?? 0}% / post {selected.postRemediationRisk ?? selected.risk ?? 0}% / paths {(selected.pathIds ?? []).length || 1}</span>
             <span>{selected.maturity !== undefined ? `${selected.maturity}% maturity` : selected.difficulty ?? "difficulty pending"}</span>
           </>
         ) : (
@@ -139,13 +144,15 @@ export function GraphCanvas({ title, description, nodes, edges, mode }: GraphCan
 
 function EnterpriseNode({ data }: NodeProps) {
   const risk = Number(data.risk ?? 0);
+  const impact = Number(data.impactScore ?? risk);
   return (
     <div className={`flow-node ${data.kind}`}>
       <Handle type="target" position={Position.Left} />
       <small>{String(data.kind).replace("_", " ")}</small>
       <strong>{String(data.label)}</strong>
-      <span>{String(data.group ?? "graph")} / {risk}% risk</span>
-      <div className="risk-meter"><i style={{ width: `${Math.min(100, risk)}%` }} /></div>
+      <span>{String(data.group ?? "graph")} / impact {impact}</span>
+      <span>pre {String(data.preRemediationRisk ?? risk)}% / post {String(data.postRemediationRisk ?? risk)}%</span>
+      <div className="risk-meter"><i style={{ width: `${Math.min(100, impact)}%` }} /></div>
       <Handle type="source" position={Position.Right} />
     </div>
   );

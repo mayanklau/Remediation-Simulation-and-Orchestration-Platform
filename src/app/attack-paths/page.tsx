@@ -189,7 +189,7 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
         </form>
         <GraphCanvas
           title="Interactive Attack Path Graph"
-          description="Real graph-library representation of entry points, exploit preconditions, vulnerable findings, crown jewels, and path breaker controls with pan, zoom, minimap, risk filters, and export."
+          description="Real graph-library representation of every attack-path point with impact score, pre-remediation risk, post-remediation risk, exploit preconditions, crown jewels, and path breaker controls."
           mode="attack"
           nodes={analytics.graph.libraryGraph.nodes.filter((node) => nodeKind === "all" || node.kind === nodeKind)}
           edges={analytics.graph.libraryGraph.edges.filter((edge) => nodeKind === "all" || graphNodeIds.has(edge.source) || graphNodeIds.has(edge.target))}
@@ -252,6 +252,33 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
       </section>
 
       <section className="panel">
+        <div className="stack-head">
+          <div>
+            <h2>Vulnerability Multi-Path Fan-Out</h2>
+            <p>Each discovered vulnerability can generate multiple attack paths. This view shows the impacted graph points, maximum pre-risk, post-remediation residual risk, and total risk reduction.</p>
+          </div>
+          <StatusBadge value={`${analytics.summary.vulnerabilitiesWithMultiplePaths} multi-path vulns`} />
+        </div>
+        <table className="table">
+          <thead><tr><th>Vulnerability</th><th>Asset</th><th>Paths</th><th>Targets</th><th>Impact</th><th>Pre Risk</th><th>Post Risk</th><th>Reduction</th></tr></thead>
+          <tbody>
+            {analytics.vulnerabilityFanOut.map((item) => (
+              <tr key={item.findingId}>
+                <td><strong>{item.title}</strong><div>{item.scanner}</div></td>
+                <td>{item.assetName}</td>
+                <td>{item.pathCount}<div>{item.pathIds.join(", ")}</div></td>
+                <td>{item.targets.join(", ")}</td>
+                <td>{item.impactScore}</td>
+                <td>{item.preRemediationRisk}%</td>
+                <td>{item.postRemediationRisk}%</td>
+                <td>{item.totalRiskReduction}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="panel">
         <h2>Vulnerability Chains</h2>
         <table className="table">
           <thead>
@@ -292,12 +319,13 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
   );
 }
 
-function GraphNode({ node, compact = false }: { node: { label: string; kind: string; group: string; risk: number }; compact?: boolean }) {
+function GraphNode({ node, compact = false }: { node: { label: string; kind: string; group: string; risk: number; impactScore?: number; preRemediationRisk?: number; postRemediationRisk?: number; pathIds?: string[] }; compact?: boolean }) {
   return (
     <div className={`graph-node ${node.kind} ${compact ? "compact" : ""}`}>
       <small>{node.kind.replace("_", " ")}</small>
       <strong>{node.label}</strong>
-      <span>{node.group} | {node.risk}%</span>
+      <span>{node.group} | impact {node.impactScore ?? node.risk}</span>
+      <span>pre {node.preRemediationRisk ?? node.risk}% / post {node.postRemediationRisk ?? node.risk}%</span>
     </div>
   );
 }

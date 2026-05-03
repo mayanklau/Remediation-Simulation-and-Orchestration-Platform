@@ -61,6 +61,11 @@ export type AttackGraphNode = {
   kind: "entry" | "asset" | "crown_jewel" | "finding" | "breaker";
   group: string;
   risk: number;
+  impactScore: number;
+  preRemediationRisk: number;
+  postRemediationRisk: number;
+  pathIds: string[];
+  sourceFindingId?: string;
   difficulty?: AttackPathDifficulty;
 };
 
@@ -176,6 +181,7 @@ export async function buildAttackPathAnalytics(tenantId: string) {
   }
   const graphModel = buildAttackGraph(paths);
   const executiveViews = buildExecutiveViews(paths);
+  const vulnerabilityFanOut = buildVulnerabilityFanOut(paths);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -194,7 +200,9 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       scannerInputs: [...new Set(paths.flatMap((path) => path.scannerInputs))],
       graphNodes: graphModel.nodes.length,
       graphEdges: graphModel.edges.length,
-      vulnerabilityChains: graphModel.vulnerabilityChains.length
+      vulnerabilityChains: graphModel.vulnerabilityChains.length,
+      vulnerabilitiesWithMultiplePaths: vulnerabilityFanOut.filter((item) => item.pathCount > 1).length,
+      maxPathsFromSingleVulnerability: Math.max(0, ...vulnerabilityFanOut.map((item) => item.pathCount))
     },
     scannerCoverage: buildScannerCoverage(findings),
     scannerNormalizationAdapters: scannerNormalizationAdapters(),
@@ -208,7 +216,8 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       kHopBlastRadius: paths.slice(0, 10).map((path) => ({ entryAsset: path.entryAsset, hops: 3, impactedAssets: path.kHopBlastRadius, topTarget: path.targetAsset })),
       centrality,
       chokePoints: centrality.filter((item) => item.kind === "choke_point").slice(0, 10),
-      crownJewelExposure: paths.filter((path) => path.crownJewelExposure !== "low").slice(0, 10).map((path) => ({ target: path.targetAsset, exposure: path.crownJewelExposure, beforeRisk: path.beforeRemediationRisk, afterRisk: path.afterRemediationRisk }))
+      crownJewelExposure: paths.filter((path) => path.crownJewelExposure !== "low").slice(0, 10).map((path) => ({ target: path.targetAsset, exposure: path.crownJewelExposure, beforeRisk: path.beforeRemediationRisk, afterRisk: path.afterRemediationRisk })),
+      vulnerabilityFanOut
     },
     executiveViews,
     decisionReadiness: buildDecisionReadiness(paths),
@@ -227,6 +236,11 @@ export async function buildAttackPathAnalytics(tenantId: string) {
           kind: node.kind,
           group: node.group,
           risk: node.risk,
+          impactScore: node.impactScore,
+          preRemediationRisk: node.preRemediationRisk,
+          postRemediationRisk: node.postRemediationRisk,
+          pathIds: node.pathIds,
+          sourceFindingId: node.sourceFindingId,
           difficulty: node.difficulty
         })),
         edges: graphModel.edges.map((edge) => ({
@@ -241,6 +255,7 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       }
     },
     vulnerabilityChainGraph: graphModel.vulnerabilityChains,
+    vulnerabilityFanOut,
     paths
   };
 }
@@ -615,7 +630,15 @@ function buildAttackGraph(paths: AttackPath[]) {
 
   const upsertNode = (node: AttackGraphNode) => {
     const existing = nodeMap.get(node.id);
-    nodeMap.set(node.id, existing ? { ...existing, risk: Math.max(existing.risk, node.risk), group: existing.group || node.group } : node);
+    nodeMap.set(node.id, existing ? {
+      ...existing,
+      risk: Math.max(existing.risk, node.risk),
+      impactScore: Math.max(existing.impactScore, node.impactScore),
+      preRemediationRisk: Math.max(existing.preRemediationRisk, node.preRemediationRisk),
+      postRemediationRisk: Math.min(existing.postRemediationRisk, node.postRemediationRisk),
+      pathIds: Array.from(new Set([...existing.pathIds, ...node.pathIds])),
+      group: existing.group || node.group
+    } : node);
   };
 
   for (const path of paths) {
@@ -627,6 +650,10 @@ function buildAttackGraph(paths: AttackPath[]) {
         kind: index === 0 ? "entry" : index === path.hops.length - 1 ? "crown_jewel" : "asset",
         group: index === 0 ? "Entry" : index === path.hops.length - 1 ? "Target" : "Transit",
         risk: index === path.hops.length - 1 ? path.beforeRemediationRisk : Math.max(20, path.beforeRemediationRisk - index * 8),
+        impactScore: pointImpactScore(path, index),
+        preRemediationRisk: path.beforeRemediationRisk,
+        postRemediationRisk: path.afterRemediationRisk,
+        pathIds: [path.id],
         difficulty: path.difficulty
       });
       if (index > 0) {
@@ -635,7 +662,7 @@ function buildAttackGraph(paths: AttackPath[]) {
           id: edgeId,
           from: hopIds[index - 1],
           to: hopIds[index],
-          label: `${path.difficulty} / ${path.beforeRemediationRisk}%`,
+          label: `impact ${pointImpactScore(path, index)} / pre ${path.beforeRemediationRisk}% / post ${path.afterRemediationRisk}%`,
           weight: path.beforeRemediationRisk,
           pathId: path.id,
           relation: "reachability"
@@ -649,6 +676,11 @@ function buildAttackGraph(paths: AttackPath[]) {
       kind: "finding",
       group: step.source,
       risk: step.businessRisk,
+      impactScore: clamp(Math.round(step.businessRisk * 0.55 + path.businessImpact * 0.35 + path.likelihood * 0.1), 0, 100),
+      preRemediationRisk: path.beforeRemediationRisk,
+      postRemediationRisk: path.afterRemediationRisk,
+      pathIds: [path.id],
+      sourceFindingId: step.findingId,
       difficulty: path.difficulty
     }));
     const breakerNode: AttackGraphNode = {
@@ -657,6 +689,10 @@ function buildAttackGraph(paths: AttackPath[]) {
       kind: "breaker",
       group: path.remediationPriority,
       risk: path.riskDelta,
+      impactScore: path.riskDelta,
+      preRemediationRisk: path.beforeRemediationRisk,
+      postRemediationRisk: path.afterRemediationRisk,
+      pathIds: [path.id],
       difficulty: path.difficulty
     };
 
@@ -670,7 +706,7 @@ function buildAttackGraph(paths: AttackPath[]) {
         id: `chain:${path.id}:${index}`,
         from: source,
         to: node.id,
-        label: path.chain[index].technique,
+        label: `${path.chain[index].technique} / impact ${chainNodes[index].impactScore} / pre ${path.beforeRemediationRisk}% / post ${path.afterRemediationRisk}%`,
         weight: path.chain[index].businessRisk,
         pathId: path.id,
         relation: "exploit_precondition"
@@ -683,7 +719,7 @@ function buildAttackGraph(paths: AttackPath[]) {
         id: `chain:${path.id}:target`,
         from: chainNodes[chainNodes.length - 1].id,
         to: hopIds[hopIds.length - 1],
-        label: `${path.targetAsset} compromise`,
+        label: `${path.targetAsset} compromise / pre ${path.beforeRemediationRisk}% / post ${path.afterRemediationRisk}%`,
         weight: path.beforeRemediationRisk,
         pathId: path.id,
         relation: "exploit_precondition"
@@ -692,7 +728,7 @@ function buildAttackGraph(paths: AttackPath[]) {
         id: `breaker:${path.id}:risk-drop`,
         from: breakerNode.id,
         to: hopIds[hopIds.length - 1],
-        label: `${path.riskDelta}% risk reduction`,
+        label: `${path.riskDelta}% risk reduction / residual ${path.afterRemediationRisk}%`,
         weight: path.riskDelta,
         pathId: path.id,
         relation: "breaker"
@@ -709,9 +745,9 @@ function buildAttackGraph(paths: AttackPath[]) {
       beforeRemediationRisk: path.beforeRemediationRisk,
       afterRemediationRisk: path.afterRemediationRisk,
       nodes: [
-        { id: hopIds[0], label: path.entryAsset, kind: "entry", group: "Entry", risk: path.beforeRemediationRisk, difficulty: path.difficulty },
+        { id: hopIds[0], label: path.entryAsset, kind: "entry", group: "Entry", risk: path.beforeRemediationRisk, impactScore: pointImpactScore(path, 0), preRemediationRisk: path.beforeRemediationRisk, postRemediationRisk: path.afterRemediationRisk, pathIds: [path.id], difficulty: path.difficulty },
         ...chainNodes,
-        { id: hopIds[hopIds.length - 1], label: path.targetAsset, kind: "crown_jewel", group: "Target", risk: path.beforeRemediationRisk, difficulty: path.difficulty },
+        { id: hopIds[hopIds.length - 1], label: path.targetAsset, kind: "crown_jewel", group: "Target", risk: path.beforeRemediationRisk, impactScore: pointImpactScore(path, path.hops.length - 1), preRemediationRisk: path.beforeRemediationRisk, postRemediationRisk: path.afterRemediationRisk, pathIds: [path.id], difficulty: path.difficulty },
         breakerNode
       ],
       edges: chainEdges
@@ -723,6 +759,67 @@ function buildAttackGraph(paths: AttackPath[]) {
     edges: [...edgeMap.values()].sort((left, right) => right.weight - left.weight).slice(0, 120),
     vulnerabilityChains: vulnerabilityChains.slice(0, 8)
   };
+}
+
+function pointImpactScore(path: AttackPath, index: number) {
+  const positionWeight = index === path.hops.length - 1 ? 20 : index === 0 ? 8 : 12;
+  return clamp(Math.round(path.businessImpact * 0.45 + path.beforeRemediationRisk * 0.35 + path.likelihood * 0.1 + positionWeight), 0, 100);
+}
+
+function buildVulnerabilityFanOut(paths: AttackPath[]) {
+  const groups = new Map<string, {
+    findingId: string;
+    title: string;
+    assetName: string;
+    scanner: string;
+    pathIds: Set<string>;
+    targets: Set<string>;
+    maxImpactScore: number;
+    maxPreRemediationRisk: number;
+    minPostRemediationRisk: number;
+    totalRiskReduction: number;
+  }>();
+
+  for (const path of paths) {
+    for (const step of path.chain) {
+      const current = groups.get(step.findingId) ?? {
+        findingId: step.findingId,
+        title: step.title,
+        assetName: step.assetName,
+        scanner: step.source,
+        pathIds: new Set<string>(),
+        targets: new Set<string>(),
+        maxImpactScore: 0,
+        maxPreRemediationRisk: 0,
+        minPostRemediationRisk: 100,
+        totalRiskReduction: 0
+      };
+      current.pathIds.add(path.id);
+      current.targets.add(path.targetAsset);
+      current.maxImpactScore = Math.max(current.maxImpactScore, clamp(Math.round(step.businessRisk * 0.45 + path.businessImpact * 0.35 + path.beforeRemediationRisk * 0.2), 0, 100));
+      current.maxPreRemediationRisk = Math.max(current.maxPreRemediationRisk, path.beforeRemediationRisk);
+      current.minPostRemediationRisk = Math.min(current.minPostRemediationRisk, path.afterRemediationRisk);
+      current.totalRiskReduction += path.riskDelta;
+      groups.set(step.findingId, current);
+    }
+  }
+
+  return [...groups.values()]
+    .map((item) => ({
+      findingId: item.findingId,
+      title: item.title,
+      assetName: item.assetName,
+      scanner: item.scanner,
+      pathCount: item.pathIds.size,
+      pathIds: [...item.pathIds],
+      targets: [...item.targets],
+      impactScore: item.maxImpactScore,
+      preRemediationRisk: item.maxPreRemediationRisk,
+      postRemediationRisk: item.minPostRemediationRisk,
+      totalRiskReduction: item.totalRiskReduction
+    }))
+    .sort((left, right) => right.pathCount - left.pathCount || right.impactScore - left.impactScore)
+    .slice(0, 25);
 }
 
 function estimateKHopBlastRadius(start: string, adjacency: Map<string, { toAssetId: string }[]>, k: number) {
