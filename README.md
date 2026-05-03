@@ -52,6 +52,7 @@ EY Remediation Twin provides a full remediation operating loop:
 - Manual connector and integration factory for any scanner, CMDB, ticketing, cloud, code, IAM, notification, or custom HTTP provider with profile persistence and dry-run health checks
 - Virtual patching and attack-path breaker control center
 - Agentic remediation orchestrator for any LLM, SLM, model gateway, or deterministic fallback
+- Knowledge Base + Planner Agent foundation aligned to the reference architecture: MongoDB canonical store, derived vector/page/graph/object indexes, OCSF-style KB records, PII-before-vectorization, hybrid retrieval facade, typed tool manifest, deterministic planner DAG, W3C provenance, budget enforcement, and HITL gates
 - Governance policies, risk exceptions, freeze windows, evidence gates, and auto-approval
 - Continuous simulation and predictive residual risk
 - Campaign board and self-updating remediation campaigns

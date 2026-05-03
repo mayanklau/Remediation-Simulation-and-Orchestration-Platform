@@ -66,7 +66,8 @@ const navGroups = [
       { href: "/production-ops", label: "Prod Ops", icon: ServerCog },
       { href: "/production-reality", label: "Reality", icon: ServerCog },
       { href: "/production-expansion", label: "Expansion", icon: Sparkles },
-      { href: "/production-effectiveness", label: "Effectiveness", icon: ShieldCheck }
+      { href: "/production-effectiveness", label: "Effectiveness", icon: ShieldCheck },
+      { href: "/kb-planner-foundation", label: "KB Planner", icon: Search }
     ]
   },
   {
