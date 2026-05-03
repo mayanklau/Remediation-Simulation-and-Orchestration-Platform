@@ -78,6 +78,7 @@ const navGroups = [
       { href: "/campaign-board", label: "Campaign Board", icon: Columns3 },
       { href: "/pilot-control-plane", label: "Pilot Plane", icon: Rocket },
       { href: "/final-production", label: "Final Prod", icon: ShieldCheck },
+      { href: "/application-logic-readiness", label: "App Logic", icon: ClipboardCheck },
       { href: "/enterprise-readiness", label: "Readiness", icon: Sparkles },
       { href: "/enterprise-maturity", label: "Maturity", icon: Rocket },
       { href: "/governance", label: "Governance", icon: ShieldCheck },
