@@ -73,7 +73,30 @@ export const POST = apiHandler(async (request) => {
           healthJson: stringifyJson(health)
         }
       });
-  return Response.json({ integration }, { status: 201 });
+  const run = await prisma.connectorRun.create({
+    data: {
+      tenantId,
+      provider,
+      operation: "profile_created",
+      status: "COMPLETED",
+      requestJson: stringifyJson({ source: "frontend_integration_form", provider, scopes, category: config.category }),
+      resultJson: stringifyJson({
+        status: "profile_appended",
+        integrationId: integration.id,
+        message: "Integration profile appended from frontend and persisted in backend."
+      }),
+      startedAt: new Date(),
+      completedAt: new Date()
+    }
+  });
+  return Response.json({
+    integration: {
+      ...integration,
+      config,
+      health
+    },
+    run
+  }, { status: 201 });
 });
 
 function normalizeProvider(provider: string) {

@@ -27,6 +27,11 @@ const templates = [
   { provider: "jira", operation: "create_issue", category: "ticketing", scopes: "write:issues,read:projects" },
   { provider: "github", operation: "create_issue", category: "code", scopes: "repo,workflow" },
   { provider: "servicenow", operation: "create_change", category: "itsm", scopes: "change:write,cmdb:read" },
+  { provider: "qualys", operation: "ingest_findings", category: "scanner", scopes: "read:vulnerabilities,read:assets" },
+  { provider: "snyk", operation: "ingest_code_findings", category: "code", scopes: "read:issues,read:projects" },
+  { provider: "aws-security-hub", operation: "ingest_security_findings", category: "cloud", scopes: "securityhub:read,organizations:read" },
+  { provider: "defender", operation: "ingest_endpoint_findings", category: "endpoint", scopes: "machine:read,alerts:read" },
+  { provider: "crowdstrike", operation: "ingest_endpoint_findings", category: "endpoint", scopes: "hosts:read,detections:read" },
   { provider: "custom-http", operation: "health_check", category: "custom", scopes: "read" }
 ];
 
@@ -82,7 +87,18 @@ export function ManualConnectorFlow({ compact = false }: { compact?: boolean }) 
       body: JSON.stringify(form)
     });
     setBusy(false);
-    setMessage(response.ok ? "Connector profile saved." : "Unable to save connector profile.");
+    if (response.ok) {
+      const data = await response.json();
+      if (data.integration) {
+        setIntegrations((current) => [data.integration, ...current.filter((item) => item.id !== data.integration.id)]);
+      }
+      if (data.run) {
+        setRuns((current) => [data.run, ...current.filter((item) => item.id !== data.run.id)]);
+      }
+      setMessage("Integration appended to backend and audit run recorded.");
+    } else {
+      setMessage("Unable to append integration.");
+    }
     await refresh();
   }
 
@@ -166,7 +182,7 @@ export function ManualConnectorFlow({ compact = false }: { compact?: boolean }) 
         <textarea value={form.payload} onChange={(event) => setForm({ ...form, payload: event.target.value })} />
       </label>
       <div className="actions">
-        <button className="button primary" onClick={createProfile} disabled={busy}><PlusCircle size={16} /> Save connector profile</button>
+        <button className="button primary" onClick={createProfile} disabled={busy}><PlusCircle size={16} /> Append integration</button>
         <button className="button" onClick={() => runDryCheck()} disabled={busy}><PlayCircle size={16} /> Run dry check</button>
         <span className="muted">{message || `Template: ${selectedTemplate?.category ?? "custom"}`}</span>
       </div>
