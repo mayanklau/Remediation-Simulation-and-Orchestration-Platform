@@ -114,37 +114,37 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
           </div>
           <StatusBadge value={`${analytics.chainIntelligenceStudio.highConfidenceChains.length} high-confidence chains`} />
         </div>
-        <div className="grid cols-3">
-          <div>
+        <div className="chain-studio-grid">
+          <div className="chain-studio-card">
             <h3>Stage Model</h3>
-            <div className="timeline">
+            <div className="stage-card-grid">
               {analytics.chainIntelligenceStudio.stageModel.map((stage) => (
-                <div className="timeline-item" key={stage.stage}>
+                <div className="stage-card" key={stage.stage}>
                   <strong>{stage.stage}</strong>
-                  <span>{stage.purpose}</span>
-                  <div className="muted">{stage.evidence.join(", ")}</div>
+                  <p>{stage.purpose}</p>
+                  <div>{stage.evidence.map((item) => <StatusBadge key={item} value={item} />)}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div>
+          <div className="chain-studio-card">
             <h3>Risk Waterfall Leaders</h3>
-            <table className="table">
-              <thead><tr><th>Path</th><th>Factor</th><th>Score</th></tr></thead>
+            <table className="table compact-table">
+              <thead><tr><th>Factor</th><th>Score</th><th>Explanation</th></tr></thead>
               <tbody>
                 {analytics.chainIntelligenceStudio.topRiskContributors.slice(0, 6).map((item) => (
                   <tr key={`${item.pathId}-${item.factor}`}>
-                    <td>{item.path}</td>
                     <td>{item.factor}</td>
                     <td>{item.contribution}</td>
+                    <td>{item.explanation}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div>
+          <div className="chain-studio-card">
             <h3>Best Controls</h3>
-            <table className="table">
+            <table className="table compact-table">
               <thead><tr><th>Control</th><th>Reduction</th><th>Friction</th><th>Decision</th></tr></thead>
               <tbody>
                 {analytics.chainIntelligenceStudio.controlEffectivenessLeaders.slice(0, 6).map((item) => (
