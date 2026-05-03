@@ -106,6 +106,61 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
         </div>
       </section>
 
+      <section className="panel">
+        <div className="stack-head">
+          <div>
+            <h2>Chain Intelligence Studio</h2>
+            <p>Kill-chain stages, MITRE tactics, confidence, risk contribution, and control-effectiveness leaders for board-ready vulnerability chaining.</p>
+          </div>
+          <StatusBadge value={`${analytics.chainIntelligenceStudio.highConfidenceChains.length} high-confidence chains`} />
+        </div>
+        <div className="grid cols-3">
+          <div>
+            <h3>Stage Model</h3>
+            <div className="timeline">
+              {analytics.chainIntelligenceStudio.stageModel.map((stage) => (
+                <div className="timeline-item" key={stage.stage}>
+                  <strong>{stage.stage}</strong>
+                  <span>{stage.purpose}</span>
+                  <div className="muted">{stage.evidence.join(", ")}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3>Risk Waterfall Leaders</h3>
+            <table className="table">
+              <thead><tr><th>Path</th><th>Factor</th><th>Score</th></tr></thead>
+              <tbody>
+                {analytics.chainIntelligenceStudio.topRiskContributors.slice(0, 6).map((item) => (
+                  <tr key={`${item.pathId}-${item.factor}`}>
+                    <td>{item.path}</td>
+                    <td>{item.factor}</td>
+                    <td>{item.contribution}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Best Controls</h3>
+            <table className="table">
+              <thead><tr><th>Control</th><th>Reduction</th><th>Friction</th><th>Decision</th></tr></thead>
+              <tbody>
+                {analytics.chainIntelligenceStudio.controlEffectivenessLeaders.slice(0, 6).map((item) => (
+                  <tr key={`${item.pathId}-${item.control}`}>
+                    <td>{item.control}</td>
+                    <td>{item.riskReduction}%</td>
+                    <td>{item.operationalFriction}%</td>
+                    <td>{item.recommendation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section className="grid cols-2" style={{ marginTop: 16 }}>
         <div className="panel">
           <div className="stack-head">
@@ -290,6 +345,7 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
               <th>Delta</th>
               <th>Scanners</th>
               <th>Breaker</th>
+              <th>Kill Chain</th>
               <th>Evidence</th>
               <th>Priority</th>
             </tr>
@@ -308,6 +364,10 @@ export default async function AttackPathsPage({ searchParams }: { searchParams?:
                 <td>{path.riskDelta}%</td>
                 <td>{path.scannerInputs.join(", ")}</td>
                 <td>{path.pathBreakerRecommendations[0]?.control ?? path.recommendedBreakers[0]}</td>
+                <td>
+                  <strong>{path.chainStageSummary.map((stage) => stage.stage).join(" -> ")}</strong>
+                  <div>{path.killChainNarrative}</div>
+                </td>
                 <td>{path.evidenceRequirements.slice(0, 3).join(", ")}</td>
                 <td><StatusBadge value={path.remediationPriority} /></td>
               </tr>

@@ -12,10 +12,14 @@ export type VulnerabilityChainStep = {
   source: string;
   category: string;
   severity: string;
+  stage: string;
+  mitreTactic: string;
   domain: string;
   technique: string;
   normalizedScanner: string;
   exploitPreconditions: string[];
+  evidenceConfidence: number;
+  riskContribution: number;
   businessRisk: number;
   exploitAvailable: boolean;
   activeExploitation: boolean;
@@ -48,6 +52,10 @@ export type AttackPath = {
   pathBreakerRecommendations: Array<{ edge: string; control: string; estimatedRiskReduction: number; why: string }>;
   remediationPlaybook: { playbookId: string; title: string; owner: string; changeRisk: string; steps: string[] };
   evidencePack: { beforeState: string[]; simulationResult: string[]; approval: string[]; executionLog: string[]; validation: string[]; residualRisk: string[] };
+  killChainNarrative: string;
+  chainStageSummary: Array<{ stage: string; count: number; maxRisk: number; confidence: number }>;
+  riskContributionWaterfall: Array<{ factor: string; contribution: number; explanation: string }>;
+  controlEffectivenessMatrix: Array<{ control: string; riskReduction: number; operationalFriction: number; timeToMitigate: string; confidence: number; recommendation: string }>;
   recommendedBreakers: string[];
   evidenceRequirements: string[];
   validationPlan: string[];
@@ -136,6 +144,8 @@ export async function buildAttackPathAnalytics(tenantId: string) {
       const difficulty = difficultyBand(difficultyScore);
       const hops = candidate.path.map((assetId) => graph.nodes.find((node) => node.id === assetId)?.name ?? assetId);
       const basicBreakers = recommendBreakers(candidate.chain, candidate.start.internetExposure, candidate.target.type);
+      const riskWaterfall = riskContributionWaterfall(candidate.chain, before, candidate.path.length, candidate.target.criticality, candidate.target.dataSensitivity);
+      const controlSimulations = simulateControls(candidate.chain, before);
       return {
         id: `attack-path-${index + 1}`,
         name: `${candidate.start.name} to ${candidate.target.name}`,
@@ -158,10 +168,14 @@ export async function buildAttackPathAnalytics(tenantId: string) {
         chokePoints: hops.slice(1, -1),
         crownJewelExposure: crownJewelExposure(candidate.target),
         difficultyExplanation: difficultyExplanation(difficultyScore, candidate.chain, candidate.path.length, candidate.start.internetExposure),
-        controlSimulations: simulateControls(candidate.chain, before),
+        controlSimulations,
         pathBreakerRecommendations: recommendPathBreakers(hops, candidate.chain, before, after, basicBreakers),
         remediationPlaybook: remediationPlaybook(candidate.chain, candidate.target.type, candidate.target.environment, before),
         evidencePack: evidencePack(candidate.chain, before, after),
+        killChainNarrative: killChainNarrative(candidate.start.name, candidate.target.name, candidate.chain),
+        chainStageSummary: chainStageSummary(candidate.chain),
+        riskContributionWaterfall: riskWaterfall,
+        controlEffectivenessMatrix: controlEffectivenessMatrix(controlSimulations, candidate.chain),
         recommendedBreakers: basicBreakers,
         evidenceRequirements: evidenceRequirements(candidate.chain),
         validationPlan: validationPlan(candidate.chain, candidate.target.name),
@@ -207,6 +221,12 @@ export async function buildAttackPathAnalytics(tenantId: string) {
     scannerCoverage: buildScannerCoverage(findings),
     scannerNormalizationAdapters: scannerNormalizationAdapters(),
     vulnerabilityChainingRules: vulnerabilityChainingRules(),
+    chainIntelligenceStudio: {
+      stageModel: attackStageModel(),
+      topRiskContributors: paths.flatMap((path) => path.riskContributionWaterfall.map((item) => ({ pathId: path.id, path: path.name, ...item }))).sort((left, right) => right.contribution - left.contribution).slice(0, 12),
+      highConfidenceChains: paths.filter((path) => average(path.chain.map((step) => step.evidenceConfidence)) >= 70).slice(0, 10).map((path) => ({ pathId: path.id, name: path.name, confidence: average(path.chain.map((step) => step.evidenceConfidence)), beforeRisk: path.beforeRemediationRisk, afterRisk: path.afterRemediationRisk })),
+      controlEffectivenessLeaders: paths.flatMap((path) => path.controlEffectivenessMatrix.map((control) => ({ pathId: path.id, path: path.name, ...control }))).sort((left, right) => right.riskReduction - left.riskReduction).slice(0, 12)
+    },
     graphAlgorithms: {
       shortestExploitablePaths: paths
         .slice()
@@ -370,8 +390,11 @@ function enumeratePaths(start: string, adjacency: Map<string, { toAssetId: strin
   return paths;
 }
 
-function toChainStep(finding: { id: string; assetId: string | null; asset: { name: string } | null; title: string; source: string; category: string; severity: string; businessRiskScore: number; exploitAvailable: boolean; activeExploitation: boolean; patchAvailable: boolean; metadataJson: string }): VulnerabilityChainStep {
+function toChainStep(finding: { id: string; assetId: string | null; asset: { name: string } | null; title: string; source: string; category: string; severity: string; cve: string | null; controlId: string | null; businessRiskScore: number; exploitAvailable: boolean; activeExploitation: boolean; patchAvailable: boolean; metadataJson: string }): VulnerabilityChainStep {
   const metadata = parseJsonObject(finding.metadataJson, {});
+  const domain = domainFromCategory(finding.category, finding.source);
+  const stage = stageForDomain(domain, finding.category);
+  const confidence = evidenceConfidence(finding, metadata);
   return {
     findingId: finding.id,
     assetId: finding.assetId ?? "unmapped",
@@ -380,15 +403,62 @@ function toChainStep(finding: { id: string; assetId: string | null; asset: { nam
     source: finding.source,
     category: finding.category,
     severity: finding.severity,
-    domain: domainFromCategory(finding.category, finding.source),
+    stage,
+    mitreTactic: mitreTacticForStage(stage),
+    domain,
     technique: mapTechnique(finding.category, metadata),
     normalizedScanner: scannerAdapterFor(finding.source),
     exploitPreconditions: exploitPreconditions(finding.category, metadata),
+    evidenceConfidence: confidence,
+    riskContribution: riskContribution(finding.businessRiskScore, confidence, finding.exploitAvailable, finding.activeExploitation),
     businessRisk: Math.round(finding.businessRiskScore),
     exploitAvailable: finding.exploitAvailable,
     activeExploitation: finding.activeExploitation,
     patchAvailable: finding.patchAvailable
   };
+}
+
+function stageForDomain(domain: string, category: string) {
+  const value = `${domain} ${category}`.toLowerCase();
+  if (value.includes("network") || value.includes("application")) return "Initial Access";
+  if (value.includes("secrets")) return "Credential Access";
+  if (value.includes("iam")) return "Privilege Escalation";
+  if (value.includes("cloud") || value.includes("kubernetes")) return "Lateral Movement";
+  if (value.includes("cicd")) return "Execution";
+  if (value.includes("data_store")) return "Data Impact";
+  return "Exploit";
+}
+
+function mitreTacticForStage(stage: string) {
+  const tactics: Record<string, string> = {
+    "Initial Access": "TA0001 Initial Access",
+    Execution: "TA0002 Execution",
+    "Privilege Escalation": "TA0004 Privilege Escalation",
+    "Defense Evasion": "TA0005 Defense Evasion",
+    "Credential Access": "TA0006 Credential Access",
+    Discovery: "TA0007 Discovery",
+    "Lateral Movement": "TA0008 Lateral Movement",
+    Collection: "TA0009 Collection",
+    Exfiltration: "TA0010 Exfiltration",
+    "Data Impact": "TA0040 Impact",
+    Exploit: "TA0002 Execution"
+  };
+  return tactics[stage] ?? "TA0002 Execution";
+}
+
+function evidenceConfidence(finding: { assetId: string | null; cve?: string | null; controlId?: string | null; exploitAvailable: boolean; activeExploitation: boolean; patchAvailable: boolean; source: string }, metadata: Record<string, unknown>) {
+  let score = finding.assetId ? 35 : 15;
+  if (finding.cve || finding.controlId) score += 15;
+  if (finding.exploitAvailable) score += 15;
+  if (finding.activeExploitation) score += 20;
+  if (finding.patchAvailable) score += 8;
+  if (Array.isArray(metadata.preconditions) && metadata.preconditions.length > 0) score += 7;
+  if (["tenable", "qualys", "wiz", "snyk", "securityhub"].includes(finding.source.toLowerCase())) score += 5;
+  return clamp(score, 1, 100);
+}
+
+function riskContribution(businessRisk: number, confidence: number, exploitAvailable: boolean, activeExploitation: boolean) {
+  return clamp(businessRisk * 0.55 + confidence * 0.25 + (exploitAvailable ? 8 : 0) + (activeExploitation ? 14 : 0), 1, 100);
 }
 
 function mapTechnique(category: string, metadata: Record<string, unknown>) {
@@ -564,6 +634,65 @@ function simulateControls(chain: VulnerabilityChainStep[], before: number) {
       ]
     };
   });
+}
+
+function chainStageSummary(chain: VulnerabilityChainStep[]) {
+  const groups = new Map<string, { stage: string; count: number; maxRisk: number; confidence: number[] }>();
+  for (const step of chain) {
+    const current = groups.get(step.stage) ?? { stage: step.stage, count: 0, maxRisk: 0, confidence: [] };
+    current.count += 1;
+    current.maxRisk = Math.max(current.maxRisk, step.riskContribution);
+    current.confidence.push(step.evidenceConfidence);
+    groups.set(step.stage, current);
+  }
+  return [...groups.values()].map((item) => ({ stage: item.stage, count: item.count, maxRisk: item.maxRisk, confidence: average(item.confidence) }));
+}
+
+function riskContributionWaterfall(chain: VulnerabilityChainStep[], before: number, hopCount: number, criticality: number, sensitivity: number) {
+  const exploitSignal = chain.filter((step) => step.exploitAvailable || step.activeExploitation).length * 9;
+  const exposureSignal = Math.max(0, 18 - hopCount * 3);
+  const businessSignal = criticality * 8 + sensitivity * 6;
+  const chainSignal = average(chain.map((step) => step.businessRisk));
+  const confidenceSignal = average(chain.map((step) => step.evidenceConfidence)) * 0.25;
+  return [
+    { factor: "Chained vulnerability severity", contribution: clamp(chainSignal * 0.45, 1, before), explanation: "Average business risk across findings participating in this path." },
+    { factor: "Exploit and threat signal", contribution: clamp(exploitSignal, 1, before), explanation: "Public exploit or active exploitation makes the chain more practical." },
+    { factor: "Reachability and exposure", contribution: clamp(exposureSignal, 1, before), explanation: "Shorter exposed routes require fewer attacker conditions." },
+    { factor: "Crown-jewel business impact", contribution: clamp(businessSignal, 1, before), explanation: "Criticality and data sensitivity of the target asset increase path impact." },
+    { factor: "Evidence confidence", contribution: clamp(confidenceSignal, 1, before), explanation: "Mapped assets, scanner identity, CVE/control IDs, and preconditions increase confidence." }
+  ].sort((left, right) => right.contribution - left.contribution);
+}
+
+function controlEffectivenessMatrix(controlSimulations: AttackPath["controlSimulations"], chain: VulnerabilityChainStep[]) {
+  const confidence = average(chain.map((step) => step.evidenceConfidence));
+  return controlSimulations.map((item) => {
+    const operationalFriction = item.control === "patch" ? 62 : item.control === "IAM deny" ? 38 : item.control === "segmentation" ? 45 : item.control === "WAF rule" ? 28 : 55;
+    const timeToMitigate = item.control === "WAF rule" || item.control === "IAM deny" ? "hours" : item.control === "segmentation" || item.control === "cloud policy" ? "1-2 days" : "release window";
+    return {
+      control: item.control,
+      riskReduction: item.riskReduction,
+      operationalFriction,
+      timeToMitigate,
+      confidence: clamp(confidence + (item.riskReduction > 30 ? 5 : 0) - (operationalFriction > 55 ? 8 : 0), 1, 100),
+      recommendation: item.riskReduction >= 35 && operationalFriction <= 45 ? "preferred path breaker" : item.riskReduction >= 25 ? "use with approval" : "supporting control"
+    };
+  }).sort((left, right) => right.riskReduction - left.riskReduction || left.operationalFriction - right.operationalFriction);
+}
+
+function killChainNarrative(entry: string, target: string, chain: VulnerabilityChainStep[]) {
+  const stages = chain.map((step) => `${step.stage}: ${step.title}`).join(" -> ");
+  return `An attacker can begin at ${entry}, progress through ${stages || "the modeled exploit chain"}, and pressure ${target}. The narrative is evidence-backed by scanner normalization, exploit preconditions, and path reachability.`;
+}
+
+function attackStageModel() {
+  return [
+    { stage: "Initial Access", purpose: "Find the first reachable weakness from internet, VPN, endpoint, app, or cloud edge.", evidence: ["exposure", "scanner finding", "route"] },
+    { stage: "Credential Access", purpose: "Identify token, secret, password, or identity material that makes the next hop credible.", evidence: ["secret scan", "IAM token", "credential age"] },
+    { stage: "Privilege Escalation", purpose: "Model permissions that turn a foothold into stronger control.", evidence: ["IAM grant", "role trust", "group membership"] },
+    { stage: "Lateral Movement", purpose: "Show how access crosses asset, subnet, namespace, account, or project boundaries.", evidence: ["reachability", "dependency", "security group"] },
+    { stage: "Data Impact", purpose: "Tie technical compromise to crown-jewel systems and regulated data.", evidence: ["criticality", "data sensitivity", "business service"] },
+    { stage: "Path Breaker", purpose: "Recommend the smallest control that removes the highest-risk edge.", evidence: ["simulation", "control diff", "residual risk"] }
+  ];
 }
 
 function remediationPlaybook(chain: VulnerabilityChainStep[], targetType: string, environment: string, before: number) {
